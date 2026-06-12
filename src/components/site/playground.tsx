@@ -15,10 +15,11 @@ interface Turn {
   confidence?: number;
 }
 
+/** Pre-composed fallbacks shown when no inference server is configured. */
 const cannedResponses: Omit<Turn, "id" | "role">[] = [
   {
     content:
-      "This is a demonstration environment, so I'll be precise about what I can and can't do here: responses are pre-composed previews of the production interface, not live inference. What you're seeing — the deliberation trace, the confidence score, the source attribution — is exactly how Ren-3 presents its work in production.",
+      "This is a demonstration environment, so I'll be precise about what I can and can't do here: responses are pre-composed previews of the production interface, not live inference. What you're seeing — the deliberation trace, the confidence score, the source attribution — is exactly how Ren presents its work in production.",
     deliberation:
       "The user is exploring the playground preview. The honest framing is to state clearly that this is a demonstration, while showing the interface elements that make Ren different: visible reasoning, calibrated confidence, and explicit sourcing.",
     deliberationSeconds: 2.4,
@@ -34,7 +35,7 @@ const cannedResponses: Omit<Turn, "id" | "role">[] = [
   },
   {
     content:
-      "I don't know — and in the production system, this is precisely the moment I'd say so rather than guess. Below a confidence threshold, Ren-3 is trained to stop, state what it would need to verify, and ask. An honest \"I don't know\" preserves something more valuable than the appearance of omniscience: your ability to trust the answers that come with high confidence.",
+      "I don't know — and in the production system, this is precisely the moment I'd say so rather than guess. Below a confidence threshold, Ren is trained to stop, state what it would need to verify, and ask. An honest \"I don't know\" preserves something more valuable than the appearance of omniscience: your ability to trust the answers that come with high confidence.",
     deliberation:
       "The request goes beyond what can be verified in this environment. Options: fabricate a plausible answer (rejected — confident error is the primary failure mode we train against) or state uncertainty explicitly and explain the escalation behavior.",
     deliberationSeconds: 5.8,
@@ -87,10 +88,14 @@ function DeliberationBlock({ turn }: { turn: Turn }) {
   );
 }
 
+type Backend = "unknown" | "live" | "demo";
+
 export function Playground() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
+  const [backend, setBackend] = useState<Backend>("unknown");
+  const [modelId, setModelId] = useState("ren-1");
   const nextId = useRef(0);
   const responseIndex = useRef(0);
   const endRef = useRef<HTMLDivElement>(null);
@@ -101,18 +106,65 @@ export function Playground() {
     }
   }, [turns, thinking]);
 
-  function send(text: string) {
-    const trimmed = text.trim();
-    if (!trimmed || thinking) return;
-    setInput("");
-    setTurns((t) => [...t, { id: nextId.current++, role: "user", content: trimmed }]);
-    setThinking(true);
+  function appendCanned() {
     const reply = cannedResponses[responseIndex.current % cannedResponses.length];
     responseIndex.current += 1;
     window.setTimeout(() => {
       setTurns((t) => [...t, { id: nextId.current++, role: "assistant", ...reply }]);
       setThinking(false);
     }, 1400);
+  }
+
+  async function send(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || thinking) return;
+    setInput("");
+
+    const history = [...turns, { id: -1, role: "user" as const, content: trimmed }];
+    setTurns((t) => [...t, { id: nextId.current++, role: "user", content: trimmed }]);
+    setThinking(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: history.map(({ role, content }) => ({ role, content })),
+        }),
+      });
+
+      if (!res.ok || !res.body) {
+        setBackend("demo");
+        appendCanned();
+        return;
+      }
+
+      setBackend("live");
+      const served = res.headers.get("x-ren-model");
+      if (served) setModelId(served);
+
+      const assistantId = nextId.current++;
+      setTurns((t) => [...t, { id: assistantId, role: "assistant", content: "" }]);
+      setThinking(false);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let acc = "";
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += decoder.decode(value, { stream: true });
+        const snapshot = acc;
+        setTurns((t) =>
+          t.map((turn) =>
+            turn.id === assistantId ? { ...turn, content: snapshot } : turn,
+          ),
+        );
+      }
+    } catch {
+      setBackend("demo");
+      appendCanned();
+    }
   }
 
   const empty = turns.length === 0;
@@ -124,13 +176,20 @@ export function Playground() {
         <div className="mx-auto flex h-12 w-full max-w-3xl items-center justify-between px-6">
           <div className="flex items-center gap-5 font-mono text-[11px] text-graphite">
             <span className="flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-bronze" />
-              ren-3-large
+              <span
+                className={cn(
+                  "size-1.5 rounded-full",
+                  backend === "live" ? "bg-signal-green" : "bg-bronze",
+                )}
+              />
+              {modelId}
             </span>
-            <span className="hidden text-graphite-soft sm:inline">deliberation · adaptive</span>
+            <span className="hidden text-graphite-soft sm:inline">
+              {backend === "live" ? "local inference · streaming" : "deliberation · adaptive"}
+            </span>
           </div>
           <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-graphite-soft">
-            Research preview
+            {backend === "live" ? "Live" : backend === "demo" ? "Demo mode" : "Research preview"}
           </span>
         </div>
       </div>
@@ -169,7 +228,7 @@ export function Playground() {
                   transition={{ duration: 0.4 }}
                   className="flex justify-end"
                 >
-                  <p className="max-w-[46ch] rounded-2xl rounded-br-md bg-paper-deep px-5 py-3.5 text-[15px] leading-relaxed text-ink">
+                  <p className="max-w-[46ch] whitespace-pre-wrap rounded-2xl rounded-br-md bg-paper-deep px-5 py-3.5 text-[15px] leading-relaxed text-ink">
                     {turn.content}
                   </p>
                 </motion.div>
@@ -184,8 +243,8 @@ export function Playground() {
                   <DeliberationBlock turn={turn} />
                   <div className="flex gap-4">
                     <RenMark className="mt-1.5 size-4 shrink-0 text-bronze" />
-                    <p className="text-[15px] leading-[1.75] text-ink-soft text-pretty">
-                      {turn.content}
+                    <p className="whitespace-pre-wrap text-[15px] leading-[1.75] text-ink-soft text-pretty">
+                      {turn.content || "…"}
                     </p>
                   </div>
                   {turn.confidence !== undefined && (
@@ -258,7 +317,9 @@ export function Playground() {
             </button>
           </form>
           <p className="mt-3 text-center font-mono text-[10.5px] uppercase tracking-[0.1em] text-graphite-soft">
-            Demonstration preview · responses are pre-composed
+            {backend === "live"
+              ? `Streaming from ${modelId} · set INFERENCE_BASE_URL to change backends`
+              : "Demo mode · start an inference server and set INFERENCE_BASE_URL to go live"}
           </p>
         </div>
       </div>

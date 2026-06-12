@@ -38,6 +38,20 @@ research organization built around a single premise: *evidence over hype*.
   warm graphite dark palette with brass signals
 - **Motion** — one entrance pattern (short fade-and-rise), no loops, no parallax
 
+## Running with a real model (Ren-1)
+
+The playground streams from any OpenAI-compatible inference server via
+`/api/chat`. With no backend configured it falls back to demo mode.
+
+1. Fine-tune and serve the model locally — full runbook in [`ml/README.md`](ml/README.md)
+   (Qwen3.5-27B + QLoRA via MLX on a 48GB Apple Silicon Mac, `ml/serve.sh`
+   serves it on `http://localhost:8080/v1`).
+2. Copy `.env.example` to `.env.local`.
+3. `npm run dev` → `/playground` shows **Live** and streams from your model.
+
+The same two env vars (`INFERENCE_BASE_URL`, `INFERENCE_MODEL_ID`) point the
+deployed site at a Cloudflare tunnel or a cloud vLLM endpoint — no code changes.
+
 ## Development
 
 ```bash
