@@ -1,13 +1,12 @@
 import Link from "next/link";
-import { FolderGit2, Github, Sparkles, Users, Zap } from "lucide-react";
+import { Coins, FolderGit2, Github, Sparkles, Users } from "lucide-react";
 import { StatusBadge } from "@/components/platform/widgets";
 import { ProjectCardActions } from "@/components/platform/project-card-actions";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { getCreditsBalance, ensureCreditsAccount } from "@/lib/credits/server";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-
-const MONTHLY_ALLOWANCE = 50;
 
 function relativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -29,7 +28,7 @@ interface Project {
 export default async function DashboardPage() {
   let projectCount = 0;
   let repositoryCount = 0;
-  let buildsThisMonth = 0;
+  let creditBalance: number | null = null;
   let projects: Project[] = [];
   let sharedProjects: Project[] = [];
 
@@ -38,13 +37,9 @@ export default async function DashboardPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
-    const startOfMonth = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      1,
-    ).toISOString();
+    await ensureCreditsAccount(user.id);
 
-    const [pResult, rResult, bResult, listResult] = await Promise.all([
+    const [pResult, rResult, creditsResult, listResult] = await Promise.all([
       supabase
         .from("projects")
         .select("id", { count: "exact", head: true })
@@ -53,11 +48,7 @@ export default async function DashboardPage() {
         .from("repositories")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id),
-      supabase
-        .from("projects")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .gte("updated_at", startOfMonth),
+      getCreditsBalance(user.id),
       supabase
         .from("projects")
         .select("id, name, kind, status, updated_at")
@@ -67,7 +58,7 @@ export default async function DashboardPage() {
 
     projectCount = pResult.count ?? 0;
     repositoryCount = rResult.count ?? 0;
-    buildsThisMonth = bResult.count ?? 0;
+    creditBalance = creditsResult;
     projects = listResult.data ?? [];
 
     try {
@@ -90,32 +81,43 @@ export default async function DashboardPage() {
     }
   }
 
-  const usedPct = Math.min(
-    100,
-    Math.round((buildsThisMonth / MONTHLY_ALLOWANCE) * 100),
-  );
-
   return (
     <div className="space-y-8">
-      {/* Usage strip */}
-      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-carbon-line bg-carbon-raised px-5 py-3">
-        <div className="flex items-center gap-2">
-          <Zap className="size-4 text-brass" strokeWidth={1.7} />
-          <span className="text-[13px] font-medium text-dusk">Free plan</span>
-          <span className="text-[12px] text-dusk-faint">·</span>
-          <span className="text-[12px] text-dusk-muted">
-            {buildsThisMonth} of {MONTHLY_ALLOWANCE} builds this month
-          </span>
+      {/* Credit strip */}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-carbon-line bg-carbon-raised px-5 py-3.5">
+        <div className="flex items-center gap-3">
+          <div className="flex size-8 items-center justify-center rounded-lg border border-carbon-line bg-carbon">
+            <Coins className="size-4 text-brass" strokeWidth={1.7} />
+          </div>
+          <div>
+            <p className="text-[13px] font-medium text-dusk">
+              {creditBalance !== null ? (
+                <>
+                  <span className="font-mono tnum text-brass">{creditBalance.toLocaleString()}</span>
+                  {" "}credits remaining
+                </>
+              ) : (
+                "First Free Credit"
+              )}
+            </p>
+            <p className="text-[11.5px] text-dusk-faint">
+              {creditBalance !== null
+                ? `≈ $${(creditBalance / 100).toFixed(2)} · 1 credit = $0.01`
+                : "100 free credits on signup · worth $1.00"}
+            </p>
+          </div>
         </div>
-        <div className="h-1.5 min-w-[120px] flex-1 overflow-hidden rounded-full bg-carbon-high sm:max-w-[160px]">
-          <div
-            className="h-full rounded-full bg-brass transition-all"
-            style={{ width: `${usedPct}%` }}
-          />
-        </div>
-        <div className="ml-auto flex items-center gap-4 text-[12px] text-dusk-faint">
-          <span>{projectCount} project{projectCount !== 1 ? "s" : ""}</span>
-          <span>{repositoryCount} repo{repositoryCount !== 1 ? "s" : ""}</span>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 text-[12px] text-dusk-faint">
+            <span>{projectCount} project{projectCount !== 1 ? "s" : ""}</span>
+            <span>{repositoryCount} repo{repositoryCount !== 1 ? "s" : ""}</span>
+          </div>
+          <Link
+            href="/dashboard/billing"
+            className="flex h-7 items-center gap-1.5 rounded-lg border border-carbon-line bg-carbon px-3 text-[12px] text-dusk-muted transition-colors hover:border-carbon-line-strong hover:text-dusk"
+          >
+            Buy credits
+          </Link>
         </div>
       </div>
 

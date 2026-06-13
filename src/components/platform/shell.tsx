@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "/dashboard", label: "Projects", exact: true },
   { href: "/dashboard/repositories", label: "Repositories" },
-  { href: "/dashboard/pull-requests", label: "Pull Requests" },
+  { href: "/dashboard/billing", label: "Billing" },
   { href: "/dashboard/integrations", label: "Integrations" },
 ];
 
@@ -19,7 +19,7 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-carbon text-dusk">
       <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-carbon-line bg-carbon/95 px-6 backdrop-blur-md">
-        <Link href="/dashboard" className="flex shrink-0 items-center gap-2 mr-2">
+        <Link href="/dashboard" className="mr-2 flex shrink-0 items-center gap-2">
           <RenMark className="size-5 text-brass" />
           <span className="font-serif text-[1.05rem] font-medium tracking-tight">Ren</span>
         </Link>
