@@ -79,7 +79,7 @@ export default async function ProjectsPage() {
           rows={projects.map((p) => [
             <Link
               key="n"
-              href={`/dashboard/projects/${p.id}`}
+              href={`/workspace/${p.id}`}
               className="font-medium text-dusk hover:text-brass transition-colors"
             >
               {p.name}

@@ -17,13 +17,15 @@ interface ConnectedRepo {
 interface NewProjectFlowProps {
   githubConnected: boolean;
   repositories: ConnectedRepo[];
+  initialMode?: Mode;
 }
 
 export function NewProjectFlow({
   githubConnected,
   repositories,
+  initialMode = "new",
 }: NewProjectFlowProps) {
-  const [mode, setMode] = useState<Mode>("new");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [name, setName] = useState("");
   const [prompt, setPrompt] = useState("");
   const [repoId, setRepoId] = useState<string>(repositories[0]?.id ?? "");

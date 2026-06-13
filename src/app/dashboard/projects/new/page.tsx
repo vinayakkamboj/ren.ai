@@ -9,7 +9,16 @@ import { readGitHubSession } from "@/lib/github/session";
 export const metadata: Metadata = { title: "New project" };
 export const dynamic = "force-dynamic";
 
-export default async function NewProjectPage() {
+interface NewProjectPageProps {
+  searchParams: Promise<{ mode?: string }>;
+}
+
+export default async function NewProjectPage({
+  searchParams,
+}: NewProjectPageProps) {
+  const { mode } = await searchParams;
+  const initialMode = mode === "repository" ? "repository" : "new";
+
   let githubConnected = false;
   let repositories: { id: string; fullName: string }[] = [];
 
@@ -47,6 +56,7 @@ export default async function NewProjectPage() {
       <NewProjectFlow
         githubConnected={githubConnected}
         repositories={repositories}
+        initialMode={initialMode}
       />
     </>
   );

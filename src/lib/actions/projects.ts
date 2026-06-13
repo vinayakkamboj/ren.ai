@@ -51,7 +51,7 @@ export async function createProject(input: CreateProjectInput): Promise<void> {
 
   revalidatePath("/dashboard/projects");
   revalidatePath("/dashboard");
-  redirect(`/dashboard/projects/${data.id}`);
+  redirect(`/workspace/${data.id}`);
 }
 
 /**

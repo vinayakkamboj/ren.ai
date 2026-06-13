@@ -1,0 +1,151 @@
+"use client";
+
+/**
+ * Workspace shell — the full build surface for one project: chat on the left,
+ * and a center that toggles between the Monaco editor, the live preview, or a
+ * split of both. Initializes the workspace store from server-provided files
+ * (falling back to any locally-persisted session) on mount.
+ */
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { ArrowLeft, Code2, Columns2, Eye, Github } from "lucide-react";
+import { RenMark } from "@/components/ui/wordmark";
+import { ChatPanel } from "@/components/workspace/chat-panel";
+import { FileTree } from "@/components/workspace/file-tree";
+import { EditorPanel } from "@/components/workspace/editor-panel";
+import { LivePreview } from "@/components/workspace/preview";
+import { useWorkspaceStore, loadPersisted } from "@/lib/builder/store";
+import type { ProjectFile, BuildMessage } from "@/lib/builder/types";
+import { cn } from "@/lib/utils";
+
+type CenterView = "editor" | "split" | "preview";
+
+interface WorkspaceShellProps {
+  projectId: string;
+  projectName: string;
+  repoFullName: string | null;
+  initialFiles: ProjectFile[];
+  hadFirstBuild: boolean;
+}
+
+export function WorkspaceShell({
+  projectId,
+  projectName,
+  repoFullName,
+  initialFiles,
+  hadFirstBuild,
+}: WorkspaceShellProps) {
+  const initialize = useWorkspaceStore((s) => s.initialize);
+  const projectFiles = useWorkspaceStore((s) => s.projectFiles);
+  const viewerKey = useWorkspaceStore((s) => s.viewerKey);
+  const [centerView, setCenterView] = useState<CenterView>("preview");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const persisted = loadPersisted(projectId);
+    const files = persisted?.files.length ? persisted.files : initialFiles;
+    const messages: BuildMessage[] = persisted?.messages ?? [];
+    const isFirstBuild = !hadFirstBuild && !persisted?.messages?.length;
+    initialize(projectId, files, messages, isFirstBuild);
+    setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
+
+  return (
+    <div className="flex h-screen flex-col overflow-hidden bg-carbon text-dusk">
+      {/* Top bar */}
+      <header className="flex h-12 shrink-0 items-center justify-between border-b border-carbon-line px-4">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard/projects"
+            className="flex items-center gap-1.5 text-dusk-faint transition-colors hover:text-dusk"
+          >
+            <ArrowLeft className="size-4" />
+          </Link>
+          <RenMark className="size-4 text-brass" />
+          <span className="text-[13px] font-medium text-dusk">{projectName}</span>
+          {repoFullName && (
+            <span className="flex items-center gap-1.5 rounded-full border border-carbon-line px-2 py-0.5 font-mono text-[11px] text-dusk-muted">
+              <Github className="size-3" />
+              {repoFullName}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-0.5 rounded-lg border border-carbon-line bg-carbon-raised p-0.5">
+          <ViewToggle active={centerView === "editor"} onClick={() => setCenterView("editor")} icon={<Code2 className="size-3.5" />} label="Code" />
+          <ViewToggle active={centerView === "split"} onClick={() => setCenterView("split")} icon={<Columns2 className="size-3.5" />} label="Split" />
+          <ViewToggle active={centerView === "preview"} onClick={() => setCenterView("preview")} icon={<Eye className="size-3.5" />} label="Preview" />
+        </div>
+      </header>
+
+      <div className="min-h-0 flex-1">
+        <PanelGroup direction="horizontal" className="h-full">
+          <Panel defaultSize={30} minSize={22} maxSize={44} className="h-full">
+            <ChatPanel />
+          </Panel>
+
+          <PanelResizeHandle className="w-px bg-carbon-line transition-colors hover:bg-brass/40 data-[resize-handle-active]:bg-brass/60" />
+
+          <Panel defaultSize={70} minSize={40} className="h-full">
+            {!ready ? (
+              <div className="flex h-full items-center justify-center bg-carbon text-[13px] text-dusk-faint">
+                Loading workspace…
+              </div>
+            ) : (
+              <div className="flex h-full">
+                {centerView !== "preview" && (
+                  <div className="flex h-full min-w-0 flex-1">
+                    <div className="w-56 shrink-0">
+                      <FileTree />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <EditorPanel />
+                    </div>
+                  </div>
+                )}
+                {centerView !== "editor" && (
+                  <div
+                    className={cn(
+                      "h-full",
+                      centerView === "split" ? "w-1/2 border-l border-carbon-line" : "flex-1",
+                    )}
+                  >
+                    <LivePreview projectFiles={projectFiles} viewerKey={viewerKey} />
+                  </div>
+                )}
+              </div>
+            )}
+          </Panel>
+        </PanelGroup>
+      </div>
+    </div>
+  );
+}
+
+function ViewToggle({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11.5px] transition-colors",
+        active ? "bg-carbon-high text-dusk" : "text-dusk-faint hover:text-dusk-muted",
+      )}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
