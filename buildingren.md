@@ -26,7 +26,7 @@ How the pieces become one system: website → auth → our own model → cloud.
                         ▲
                         │ QLoRA fine-tune (ml/ kit)
               ┌────────────────────┐
-              │ Ren-1 = Qwen3.5-27B│
+              │ Astra = Qwen3.5-27B│
               │ + our adapter      │
               └────────────────────┘
 ```
@@ -36,7 +36,7 @@ Two env-var groups control everything — no code changes between local and clou
 | Variable | Purpose |
 | --- | --- |
 | `INFERENCE_BASE_URL` | OpenAI-compatible endpoint (`http://localhost:8080/v1` → tunnel → vLLM) |
-| `INFERENCE_MODEL_ID` | Served model id (`ren-1`) |
+| `INFERENCE_MODEL_ID` | Served model id (`astra`) |
 | `INFERENCE_API_KEY` | Bearer token for hosted endpoints (optional) |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon (publishable) key |
@@ -47,7 +47,9 @@ Everything degrades gracefully: **no Supabase keys → auth off, dashboard open
 
 ## Phase 0 — Foundation ✅ (done)
 
-- Public site, research portal, products, playground, internal dashboard.
+- Product-focused site: Ren Code (flagship), the Astra research model, philosophy.
+- Product dashboard: projects, repositories, integrations, conversations,
+  pull requests, documentation, settings — built around honest empty states.
 - `/api/chat` streaming route (OpenAI-compatible, tested end-to-end).
 - `ml/` fine-tuning kit: Qwen3.5-27B QLoRA on the 48GB Mac, starter identity
   dataset, train/serve/eval scripts.
@@ -77,16 +79,16 @@ What we need from you (the keys you mentioned):
 Next steps inside this phase once keys land: persist playground conversations
 per user, log `api_usage` from `/api/chat`, show real usage in the dashboard.
 
-## Phase 2 — Ren-1 exists (the model)
+## Phase 2 — Astra exists (the model)
 
 1. `hf download mlx-community/Qwen3.5-27B-MLX-4bit` on the Mac.
 2. Grow `ml/data/` beyond the starter set (identity is covered; capability
    needs your real coding/math examples — highest-leverage work in the plan).
 3. `ml/train.sh` → `ml/eval.sh` (base vs. tuned, fixed prompts never trained
    on) → `ml/serve.sh`.
-4. `.env.local` → playground shows **Live · ren-1**.
+4. `.env.local` → playground shows **Live · astra**.
 
-Exit criteria: model self-identifies as Ren-1, eval suite shows no regression
+Exit criteria: model self-identifies as Astra, eval suite shows no regression
 vs. base on held-out coding/math prompts.
 
 ## Phase 3 — World-facing deployment
@@ -95,7 +97,7 @@ vs. base on held-out coding/math prompts.
 2. **Model, free path:** `cloudflared tunnel --url http://localhost:8080` on
    the Mac → set `INFERENCE_BASE_URL` on Vercel to the tunnel URL. Honest
    limits: up when the Mac is up, one user at a time comfortably.
-3. **Model, paid path (when traffic justifies):** push fused `ren-1` weights
+3. **Model, paid path (when traffic justifies):** push fused `astra` weights
    to a private HF repo → vLLM on Modal/RunPod serverless (scale-to-zero) →
    swap `INFERENCE_BASE_URL`. Zero code changes.
 4. Add per-user rate limiting in `/api/chat` (Supabase `api_usage` makes this
@@ -107,10 +109,10 @@ vs. base on held-out coding/math prompts.
   training data (with consent flag in `conversations`).
 - **Free training scale-up:** Kaggle (30 GPU-h/week) for bigger QLoRA runs on
   the same JSONL format; adapters come back to the Mac.
-- **Real Ledger:** eval results written to Postgres; the dashboard's
-  benchmark center reads live data instead of fixtures.
-- **Ren API as a product:** Supabase-issued API keys, usage-metered, the
-  `/platform` page stops being aspirational.
+- **Live workspace data:** projects, repositories, and pull requests read
+  from Supabase, replacing the empty-state fixtures.
+- **Ren Code API:** Supabase-issued API keys, usage-metered, so teams can
+  drive Ren Code programmatically.
 
 ## Sequencing rule
 

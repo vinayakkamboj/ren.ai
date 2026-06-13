@@ -27,7 +27,7 @@ const cannedResponses: Omit<Turn, "id" | "role">[] = [
   },
   {
     content:
-      "A fair question to ask any model — and one I'd rather answer carefully than impressively. In production, my confidence number is calibrated: across many answers stated at 0.9, roughly 90% are correct. That property is trained directly, by penalizing confident error more heavily than admitted uncertainty. It's documented in \"Calibration-Aware Objectives\" in the research portal.",
+      "A fair question to ask any model — and one I'd rather answer carefully than impressively. The honest answer today: Ren AI is in active development, and Astra, the model behind Ren Code, is still in fine-tuning. Capability and calibration numbers will be published alongside the evaluation harness that produces them — not before.",
     deliberation:
       "Considering how to explain calibration without overclaiming. The key distinction: a confidence score is only meaningful if it's been measured against outcomes. Citing the published paper keeps the claim checkable.",
     deliberationSeconds: 4.1,
@@ -95,7 +95,7 @@ export function Playground() {
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const [backend, setBackend] = useState<Backend>("unknown");
-  const [modelId, setModelId] = useState("ren-1");
+  const [modelId, setModelId] = useState("astra");
   const nextId = useRef(0);
   const responseIndex = useRef(0);
   const endRef = useRef<HTMLDivElement>(null);

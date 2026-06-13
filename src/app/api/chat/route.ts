@@ -18,7 +18,7 @@ const SYSTEM_PROMPT =
  *
  * Configure via environment:
  *   INFERENCE_BASE_URL   e.g. http://localhost:8080/v1  (mlx_lm.server, vLLM, …)
- *   INFERENCE_MODEL_ID   served model id (default "ren-1")
+ *   INFERENCE_MODEL_ID   served model id (default "astra")
  *   INFERENCE_API_KEY    optional bearer token for hosted endpoints
  *
  * Returns 503 when no backend is configured — the playground falls back to
@@ -26,7 +26,7 @@ const SYSTEM_PROMPT =
  */
 export async function POST(req: NextRequest) {
   const base = process.env.INFERENCE_BASE_URL;
-  const model = process.env.INFERENCE_MODEL_ID ?? "ren-1";
+  const model = process.env.INFERENCE_MODEL_ID ?? "astra";
 
   if (!base) {
     return Response.json({ error: "inference_not_configured" }, { status: 503 });

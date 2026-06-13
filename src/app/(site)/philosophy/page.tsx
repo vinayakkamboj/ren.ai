@@ -9,25 +9,25 @@ import { principles } from "@/components/site/philosophy-section";
 export const metadata: Metadata = {
   title: "Philosophy",
   description:
-    "Evidence over hype. Reasoning over memorization. Reliability over marketing. The research philosophy of Ren AI.",
+    "Evidence over hype. Understanding over autocomplete. Reliability over marketing. How Ren AI works while building in the open.",
 };
 
 const commitments = [
   {
-    title: "We publish the harness, not just the number",
-    body: "Every benchmark result ships with the exact evaluation code that produced it. If you can't reproduce our numbers, that's our bug — report it and we'll publish the resolution.",
+    title: "We publish the method, not just the result",
+    body: "When Astra produces a capability number, it will ship with the evaluation harness that produced it. Until then, we describe progress qualitatively and honestly.",
   },
   {
-    title: "We retire contaminated benchmarks publicly",
-    body: "When an evaluation enters our training data, it stops being an evaluation. We announce retirements with the same prominence as results.",
+    title: "You decide what Ren Code can see",
+    body: "Repository access is granted per repo and revocable. Ren Code reads what you allow, and nothing else.",
   },
   {
-    title: "Model cards are living documents",
-    body: "Limitations discovered after release are added to the record, dated, with reproduction steps where safe. The documentation never stops being true.",
+    title: "Changes are made to be reviewed",
+    body: "Ren Code produces pull requests, not silent commits. You read the diff, you decide what merges. Autonomy with an audit trail.",
   },
   {
-    title: "Negative results enter the record",
-    body: "Failed architectures, ambiguous safety findings, reward hacks our agents discovered — published with the same care as the wins, because a field that hides its failures repeats them.",
+    title: "Honest about the stage",
+    body: "Ren AI is early. We would rather show a real roadmap than stage a finished story. What you see here is what actually exists.",
   },
 ];
 
@@ -35,13 +35,13 @@ export default function PhilosophyPage() {
   return (
     <>
       <PageIntro
-        eyebrow="Research philosophy"
+        eyebrow="How we work"
         title={
           <>
-            Truth is a <em className="text-bronze-deep">discipline</em>, not a slogan.
+            Building in the open, <em className="text-bronze-deep">without the hype</em>.
           </>
         }
-        lede="Ren AI was founded on a premise: the binding constraint on intelligence research is no longer ideas or compute, but the fidelity of our measurements. Everything else follows from taking that seriously."
+        lede="Ren AI is in active development. Our principles are the ones we can actually keep at this stage — and the ones we intend to keep as we grow."
       />
 
       <Container className="py-20 md:py-28">
@@ -64,9 +64,9 @@ export default function PhilosophyPage() {
 
         <section className="mt-28">
           <Reveal>
-            <Eyebrow>Standing commitments</Eyebrow>
+            <Eyebrow>Commitments</Eyebrow>
             <h2 className="mt-5 max-w-[20ch] font-serif text-display font-normal text-ink text-balance">
-              Rules we wrote down so you can hold us to them.
+              What you can hold us to today.
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2">
@@ -83,21 +83,19 @@ export default function PhilosophyPage() {
           </div>
         </section>
 
-        <section id="join" className="mt-28 scroll-mt-28">
+        <section className="mt-28">
           <Reveal className="rounded-2xl bg-paper-deep/70 p-10 md:p-16">
-            <Eyebrow>Join</Eyebrow>
+            <Eyebrow>Get started</Eyebrow>
             <h2 className="mt-5 max-w-[22ch] font-serif text-display font-normal text-ink text-balance">
-              We hire people who would rather be correct than impressive.
+              Try Ren Code while it is still early.
             </h2>
             <p className="mt-6 max-w-[56ch] text-lede text-graphite text-pretty">
-              Research scientists, systems engineers, and evaluators who treat
-              measurement as a craft. The interview process includes
-              reproducing one of our published results — we mean it about the
-              harness.
+              Create a workspace, connect a repository, and build alongside a
+              product we are improving in the open.
             </p>
             <div className="mt-10">
-              <Button href="/research" size="lg">
-                Read the research first
+              <Button href="/dashboard" size="lg">
+                Start building
               </Button>
             </div>
           </Reveal>

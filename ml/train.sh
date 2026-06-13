@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# QLoRA fine-tune of the Ren-1 base on Apple Silicon (defaults tuned for 48GB).
+# QLoRA fine-tune of the Astra base on Apple Silicon (defaults tuned for 48GB).
 # Usage: ./train.sh   (override with env vars: BASE_MODEL, ITERS, NUM_LAYERS, BATCH_SIZE)
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -9,7 +9,7 @@ ITERS="${ITERS:-600}"
 NUM_LAYERS="${NUM_LAYERS:-16}"   # lower to 8 if you hit memory pressure
 BATCH_SIZE="${BATCH_SIZE:-1}"
 
-echo "Training Ren-1 adapter"
+echo "Training Astra adapter"
 echo "  base:   ${BASE_MODEL}"
 echo "  iters:  ${ITERS} · layers: ${NUM_LAYERS} · batch: ${BATCH_SIZE}"
 echo

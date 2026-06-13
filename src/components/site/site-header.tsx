@@ -9,10 +9,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const nav = [
+  { href: "/code", label: "Ren Code" },
   { href: "/research", label: "Research" },
-  { href: "/models", label: "Models" },
-  { href: "/products/chat", label: "Products" },
-  { href: "/platform", label: "Platform" },
   { href: "/philosophy", label: "Philosophy" },
 ];
 
@@ -63,11 +61,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Button href="/dashboard" variant="ghost" size="sm">
-            Internal
+          <Button href="/login" variant="ghost" size="sm">
+            Sign in
           </Button>
-          <Button href="/playground" variant="primary" size="sm">
-            Try Ren
+          <Button href="/dashboard" variant="primary" size="sm">
+            Start building
           </Button>
         </div>
 
@@ -115,11 +113,11 @@ export function SiteHeader() {
                 </Link>
               ))}
               <div className="mt-4 flex gap-3">
-                <Button href="/playground" size="md">
-                  Try Ren
+                <Button href="/dashboard" size="md">
+                  Start building
                 </Button>
-                <Button href="/dashboard" variant="outline" size="md">
-                  Internal
+                <Button href="/login" variant="outline" size="md">
+                  Sign in
                 </Button>
               </div>
             </div>

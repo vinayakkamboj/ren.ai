@@ -8,13 +8,6 @@ import { ArrowUpRight } from "lucide-react";
 
 const ease = [0.25, 1, 0.5, 1] as const;
 
-const stats = [
-  { label: "AIME 2025", value: "86.7%" },
-  { label: "SWE-bench Verified", value: "72.3%" },
-  { label: "Context", value: "1M tokens" },
-  { label: "Calibration ECE", value: "0.059" },
-];
-
 export function Hero() {
   const reduce = useReducedMotion();
   const enter = (delay: number) =>
@@ -28,7 +21,6 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden">
-      {/* Faint open-circle watermark — the Ren mark at architectural scale */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-[24rem] -top-[20rem] hidden lg:block"
@@ -44,64 +36,69 @@ export function Hero() {
       </div>
 
       <Container className="relative pb-24 pt-40 md:pb-32 md:pt-52">
-        <motion.p
-          {...enter(0)}
-          className="font-mono text-[11px] uppercase tracking-eyebrow text-bronze"
-        >
-          Ren-3 — released February 2026
-        </motion.p>
+        <motion.div {...enter(0)} className="flex items-center gap-2.5">
+          <span className="flex size-1.5 items-center justify-center">
+            <span className="size-1.5 animate-pulse rounded-full bg-bronze" />
+          </span>
+          <p className="font-mono text-[11px] uppercase tracking-eyebrow text-bronze">
+            Ren AI · in active development
+          </p>
+        </motion.div>
 
         <motion.h1
           {...enter(0.08)}
-          className="mt-8 max-w-[14ch] font-serif text-display-xl font-normal text-ink"
+          className="mt-8 max-w-[16ch] font-serif text-display-xl font-normal text-ink"
         >
-          Building intelligence through{" "}
-          <em className="text-bronze-deep">reasoning</em>.
+          AI software engineering that <em className="text-bronze-deep">understands your code</em>.
         </motion.h1>
 
         <motion.p
           {...enter(0.18)}
-          className="mt-8 max-w-[52ch] text-lede text-graphite text-pretty"
+          className="mt-8 max-w-[54ch] text-lede text-graphite text-pretty"
         >
-          Ren AI develops advanced reasoning systems, coding models, and
-          autonomous agents designed to expand human capability.
+          Ren Code builds new applications and continues development on existing
+          repositories — reading architecture, reasoning over dependencies, and
+          opening pull requests you can actually review.
         </motion.p>
 
         <motion.div {...enter(0.28)} className="mt-12 flex flex-wrap items-center gap-4">
-          <Button href="/playground" size="lg">
-            Try Ren
+          <Button href="/dashboard" size="lg">
+            Start building
           </Button>
-          <Button href="/research" variant="outline" size="lg">
-            Research
+          <Button href="/code" variant="outline" size="lg">
+            How Ren Code works
             <ArrowUpRight className="size-4 text-graphite transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Button>
         </motion.div>
 
         <motion.div {...enter(0.42)} className="mt-24 md:mt-32">
           <div className="rule" />
-          <dl className="grid grid-cols-2 gap-x-8 gap-y-8 pt-8 sm:grid-cols-4">
-            {stats.map((s) => (
-              <div key={s.label}>
-                <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-graphite-soft">
-                  {s.label}
-                </dt>
-                <dd className="tnum mt-2 font-serif text-headline text-ink">
-                  {s.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-6 text-[12px] text-graphite-soft">
-            Internal evaluations under the published Ledger harness. Methodology
-            and full transcripts in{" "}
-            <Link
-              href="/research/benchmark-methodology"
-              className="underline decoration-line-strong underline-offset-4 hover:text-graphite"
-            >
-              How We Report Numbers
+          <div className="grid gap-x-8 gap-y-8 pt-8 sm:grid-cols-2">
+            <Link href="/code#new-project" className="group block">
+              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-graphite-soft">
+                Workflow 01
+              </p>
+              <p className="mt-3 font-serif text-title text-ink transition-colors duration-300 group-hover:text-bronze-deep">
+                Start a new project from a prompt
+              </p>
+              <p className="mt-2 max-w-[40ch] text-sm leading-relaxed text-graphite">
+                Describe what you want to build — a SaaS, a CRM, an internal
+                tool — and watch it take shape.
+              </p>
             </Link>
-            .
-          </p>
+            <Link href="/code#repository" className="group block sm:border-l sm:border-line sm:pl-8">
+              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-graphite-soft">
+                Workflow 02
+              </p>
+              <p className="mt-3 font-serif text-title text-ink transition-colors duration-300 group-hover:text-bronze-deep">
+                Continue an existing repository
+              </p>
+              <p className="mt-2 max-w-[40ch] text-sm leading-relaxed text-graphite">
+                Connect GitHub and let Ren Code understand the codebase before
+                it changes a line.
+              </p>
+            </Link>
+          </div>
         </motion.div>
       </Container>
     </section>

@@ -17,7 +17,7 @@ for prompt in "${PROMPTS[@]}"; do
   echo "────────────────────────────────────────────────────────"
   echo "PROMPT: ${prompt}"
   if [ -d ./adapters ]; then
-    echo "--- tuned (Ren-1) ---"
+    echo "--- tuned (Astra) ---"
     mlx_lm.generate --model "${BASE_MODEL}" --adapter-path ./adapters \
       --prompt "${prompt}" --max-tokens 300
   fi

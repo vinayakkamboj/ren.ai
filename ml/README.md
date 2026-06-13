@@ -1,6 +1,6 @@
-# Ren-1 fine-tuning kit (Apple Silicon, 48GB)
+# Astra fine-tuning kit (Apple Silicon, 48GB)
 
-Turn `Qwen3.5-27B` into **Ren-1** — your own model — with QLoRA on a single
+Turn `Qwen3.5-27B` into **Astra** — your own model — with QLoRA on a single
 48GB Mac. No paid services anywhere in this pipeline.
 
 ## Why these choices
@@ -39,7 +39,7 @@ hf download mlx-community/Qwen3.5-27B-MLX-4bit
 ## 2. Build the dataset
 
 `data/train.jsonl` and `data/valid.jsonl` ship with starter examples that
-teach the model its **identity** (it is Ren-1, built by Ren AI) and its
+teach the model its **identity** (it is Astra, built by Ren AI) and its
 **voice** (calibrated, evidence-first, honest about uncertainty). Format:
 
 ```json
@@ -82,7 +82,7 @@ Then point the website at it (`.env.local` in the repo root):
 
 ```
 INFERENCE_BASE_URL=http://localhost:8080/v1
-INFERENCE_MODEL_ID=ren-1
+INFERENCE_MODEL_ID=astra
 ```
 
 `npm run dev` → open `/playground` → the session bar shows **Live** and
@@ -92,14 +92,14 @@ responses stream from your model.
 
 ```bash
 mlx_lm.fuse --model mlx-community/Qwen3.5-27B-MLX-4bit \
-  --adapter-path ./adapters --save-path ./ren-1
+  --adapter-path ./adapters --save-path ./astra
 ```
 
-- **Local daily use:** serve `./ren-1` directly, or convert to GGUF for Ollama.
+- **Local daily use:** serve `./astra` directly, or convert to GGUF for Ollama.
 - **Free public demo:** keep serving from the Mac and expose it with a free
   Cloudflare tunnel (`cloudflared tunnel --url http://localhost:8080`), then
   set `INFERENCE_BASE_URL` on your Vercel deployment to the tunnel URL.
-- **Always-on later (paid):** push `./ren-1` to a private Hugging Face repo
+- **Always-on later (paid):** push `./astra` to a private Hugging Face repo
   and serve with vLLM on serverless GPU (Modal / RunPod). The website needs
   zero code changes — only the two env vars.
 

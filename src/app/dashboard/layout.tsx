@@ -3,10 +3,10 @@ import { PlatformShell } from "@/components/platform/shell";
 
 export const metadata: Metadata = {
   title: {
-    default: "Research Platform",
-    template: "%s — Ren Research Platform",
+    default: "Dashboard",
+    template: "%s — Ren Code",
   },
-  description: "Ren AI internal research platform.",
+  description: "Ren Code workspace.",
   robots: { index: false, follow: false },
 };
 

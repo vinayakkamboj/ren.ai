@@ -1,111 +1,130 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/ui/reveal";
+import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/site/page-intro";
-import {
-  formatDate,
-  publicationCategories,
-  publications,
-  type PublicationCategory,
-} from "@/lib/data/publications";
+import { astra } from "@/lib/data/astra";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Research",
   description:
-    "Papers, technical reports, safety research, evaluations, model cards, and benchmark methodology from Ren AI.",
+    "Astra — the model Ren AI is currently fine-tuning for software engineering. Active development, published honestly.",
 };
 
-export default async function ResearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string }>;
-}) {
-  const { category } = await searchParams;
-  const active = publicationCategories.includes(category as PublicationCategory)
-    ? (category as PublicationCategory)
-    : null;
+const stateLabel: Record<string, string> = {
+  "in-progress": "In progress",
+  next: "Next",
+  planned: "Planned",
+};
+const stateDot: Record<string, string> = {
+  "in-progress": "bg-bronze",
+  next: "bg-bronze-soft",
+  planned: "bg-stone",
+};
 
-  const list = [...publications]
-    .filter((p) => (active ? p.category === active : true))
-    .sort((a, b) => b.date.localeCompare(a.date));
-
+export default function ResearchPage() {
   return (
     <>
       <PageIntro
-        eyebrow="Research portal"
+        eyebrow="Current research model"
         title={
           <>
-            Everything we claim, <em className="text-bronze-deep">you can check</em>.
+            Astra. <em className="text-bronze-deep">Active fine-tuning.</em>
           </>
         }
-        lede="Papers, technical reports, safety findings, evaluations, model cards, and the methodology that binds them. Negative results are published with the same care as the wins."
+        lede={astra.summary}
       />
 
-      <Container className="py-16 md:py-20">
-        {/* Category filter */}
-        <Reveal className="flex flex-wrap gap-2">
-          <Link
-            href="/research"
-            className={cn(
-              "rounded-full border px-4 py-2 text-[13px] font-medium tracking-tight transition-all duration-300",
-              !active
-                ? "border-ink bg-ink text-paper"
-                : "border-line text-graphite hover:border-stone hover:text-ink",
-            )}
-          >
-            All
-          </Link>
-          {publicationCategories.map((c) => (
-            <Link
-              key={c}
-              href={`/research?category=${encodeURIComponent(c)}`}
-              className={cn(
-                "rounded-full border px-4 py-2 text-[13px] font-medium tracking-tight transition-all duration-300",
-                active === c
-                  ? "border-ink bg-ink text-paper"
-                  : "border-line text-graphite hover:border-stone hover:text-ink",
-              )}
-            >
-              {c}
-            </Link>
+      <Container className="py-20 md:py-28">
+        {/* Status card */}
+        <Reveal className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+          {[
+            { k: "Codename", v: astra.codename },
+            { k: "Status", v: astra.status, live: true },
+            { k: "Base", v: astra.base },
+          ].map((s) => (
+            <div key={s.k} className="bg-paper p-7">
+              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-graphite-soft">
+                {s.k}
+              </p>
+              <p className="mt-3 flex items-center gap-2 font-serif text-title text-ink">
+                {s.live && <span className="size-1.5 animate-pulse rounded-full bg-bronze" />}
+                {s.v}
+              </p>
+            </div>
           ))}
         </Reveal>
 
-        {/* Publication index */}
-        <div className="mt-12">
-          {list.map((pub, i) => (
-            <Reveal key={pub.slug} delay={Math.min(i * 0.04, 0.2)}>
-              <Link
-                href={`/research/${pub.slug}`}
-                className="group grid gap-4 border-t border-line py-10 transition-colors duration-300 hover:bg-paper-deep/40 md:grid-cols-[11rem_1fr_auto] md:gap-10 md:px-4 md:-mx-4"
+        {/* Focus areas */}
+        <section className="mt-20">
+          <Reveal>
+            <h2 className="font-serif text-display font-normal text-ink">Focus areas</h2>
+            <p className="mt-5 max-w-[54ch] text-lede text-graphite">
+              Astra is specialized, not general. Everything points at making
+              Ren Code a better engineer.
+            </p>
+          </Reveal>
+          <div className="mt-12">
+            {astra.focusAreas.map((f, i) => (
+              <Reveal
+                key={f.title}
+                delay={Math.min(i * 0.05, 0.2)}
+                className="grid gap-4 border-t border-line py-8 md:grid-cols-[20rem_1fr] md:gap-10"
               >
-                <div className="space-y-3">
-                  <Badge tone="outline">{pub.category}</Badge>
-                  <p className="font-mono text-[11px] text-graphite-soft">
-                    {formatDate(pub.date)}
-                  </p>
-                </div>
-                <div className="max-w-2xl">
-                  <h2 className="font-serif text-headline text-ink text-balance transition-colors duration-300 group-hover:text-bronze-deep">
-                    {pub.title}
-                  </h2>
-                  <p className="mt-3 text-[15px] leading-relaxed text-graphite text-pretty">
-                    {pub.abstract}
-                  </p>
-                  <p className="mt-4 text-[13px] text-graphite-soft">
-                    {pub.authors.join(" · ")}
-                  </p>
-                </div>
-                <ArrowUpRight className="hidden size-4 self-center text-graphite-soft transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink md:block" />
-              </Link>
-            </Reveal>
-          ))}
-          <div className="rule" />
-        </div>
+                <h3 className="font-serif text-title text-ink">{f.title}</h3>
+                <p className="max-w-[60ch] text-[15px] leading-relaxed text-graphite text-pretty">
+                  {f.detail}
+                </p>
+              </Reveal>
+            ))}
+            <div className="rule" />
+          </div>
+        </section>
+
+        {/* Roadmap */}
+        <section className="mt-20">
+          <Reveal>
+            <h2 className="font-serif text-display font-normal text-ink">Where we are</h2>
+            <p className="mt-5 max-w-[54ch] text-lede text-graphite">
+              A real development initiative, shown as it actually stands.
+            </p>
+          </Reveal>
+          <ol className="mt-12">
+            {astra.phases.map((p, i) => (
+              <Reveal
+                key={p.label}
+                delay={Math.min(i * 0.05, 0.2)}
+                className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-t border-line py-6 md:grid-cols-[18rem_1fr_7rem]"
+              >
+                <span className="flex items-center gap-3 font-serif text-title text-ink">
+                  <span className={cn("size-2 rounded-full", stateDot[p.state])} />
+                  {p.label}
+                </span>
+                <span className="col-span-2 max-w-[60ch] text-[14.5px] leading-relaxed text-graphite md:col-span-1">
+                  {p.detail}
+                </span>
+                <span className="hidden text-right font-mono text-[10.5px] uppercase tracking-[0.1em] text-graphite-soft md:block">
+                  {stateLabel[p.state]}
+                </span>
+              </Reveal>
+            ))}
+            <li className="border-t border-line" />
+          </ol>
+          <Reveal className="mt-10 rounded-2xl border border-line bg-paper-deep/50 p-7">
+            <p className="max-w-[70ch] text-[14px] leading-relaxed text-graphite">
+              We will not publish benchmark numbers before we publish the
+              evaluation harness that produces them. When capability results
+              arrive, they will arrive with the method to reproduce them.
+            </p>
+          </Reveal>
+        </section>
+
+        <Reveal className="mt-20">
+          <Button href="/code" size="lg">
+            See Ren Code
+          </Button>
+        </Reveal>
       </Container>
     </>
   );

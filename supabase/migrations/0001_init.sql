@@ -46,7 +46,7 @@ create table if not exists public.conversations (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users (id) on delete cascade,
   title       text not null default 'Untitled',
-  model_id    text not null default 'ren-1',
+  model_id    text not null default 'astra',
   -- Consent flag: only opted-in conversations may become training data.
   training_ok boolean not null default false,
   created_at  timestamptz not null default now(),
