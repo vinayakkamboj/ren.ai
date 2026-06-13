@@ -1,0 +1,99 @@
+{
+  "id": "legal-review",
+  "name": "Legal Review Demo",
+  "description": "Contract review, redlining, clause comparison, and e-signature workflows for legal teams.",
+  "category": "workflow",
+  "tags": ["legal", "contracts", "review", "redline", "comparison", "signatures"],
+  "version": "1.0.0",
+  "thumbnail": null,
+  "previewUrl": null,
+  "estimatedSetupMinutes": 3,
+  "defaultConfig": {
+    "theme": {
+      "primaryColor": "#100d1e",
+      "accentColor": "#8b5cf6",
+      "backgroundColor": "#0a0a0a",
+      "fontFamily": "Inter",
+      "logoUrl": null,
+      "companyName": "LexGroup Partners",
+      "industry": "legal",
+      "mode": "dark"
+    },
+    "features": {
+      "annotations": true,
+      "forms": false,
+      "signatures": true,
+      "search": true,
+      "thumbnails": true,
+      "ocr": false,
+      "redaction": true,
+      "comparison": true,
+      "export": true,
+      "collaboration": true,
+      "aiAssistant": false
+    },
+    "content": {
+      "demoTitle": "Contract Intelligence Platform",
+      "demoDescription": "Review, compare, and execute contracts with precision and speed.",
+      "companyTagline": "Legal clarity at machine speed",
+      "heroText": null,
+      "ctaText": "Review Contract"
+    },
+    "sampleDocuments": [
+      {
+        "id": "nda-001",
+        "name": "Non-Disclosure Agreement",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Standard mutual NDA template"
+      },
+      {
+        "id": "msa-001",
+        "name": "Master Service Agreement",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Enterprise MSA with standard clauses"
+      }
+    ],
+    "toolbar": {
+      "showAnnotationTools": true,
+      "showFormTools": false,
+      "showExportTools": true,
+      "showSearchBar": true,
+      "showThumbnails": true,
+      "position": "top",
+      "customItems": []
+    },
+    "workflow": [
+      {
+        "id": "step-1",
+        "label": "Import Contract",
+        "description": "Load contract for review",
+        "toolRequired": null,
+        "order": 1
+      },
+      {
+        "id": "step-2",
+        "label": "Clause Review",
+        "description": "Review and mark up key clauses",
+        "toolRequired": "annotations",
+        "order": 2
+      },
+      {
+        "id": "step-3",
+        "label": "Redline",
+        "description": "Add tracked changes and redlines",
+        "toolRequired": "annotations",
+        "order": 3
+      },
+      {
+        "id": "step-4",
+        "label": "Execute",
+        "description": "Collect digital signatures",
+        "toolRequired": "signatures",
+        "order": 4
+      }
+    ],
+    "activeSampleDocumentId": "nda-001"
+  }
+}

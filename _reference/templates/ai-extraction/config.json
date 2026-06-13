@@ -1,0 +1,92 @@
+{
+  "id": "ai-extraction",
+  "name": "AI Data Extraction Demo",
+  "description": "Extract structured data from unstructured documents using AI-powered OCR and field detection.",
+  "category": "workflow",
+  "tags": ["ai", "ocr", "extraction", "data", "automation"],
+  "version": "1.0.0",
+  "thumbnail": null,
+  "previewUrl": null,
+  "estimatedSetupMinutes": 3,
+  "defaultConfig": {
+    "theme": {
+      "primaryColor": "#0c1220",
+      "accentColor": "#6366f1",
+      "backgroundColor": "#0a0a0a",
+      "fontFamily": "Inter",
+      "logoUrl": null,
+      "companyName": "Acme Corp",
+      "industry": null,
+      "mode": "dark"
+    },
+    "features": {
+      "annotations": true,
+      "forms": true,
+      "signatures": false,
+      "search": true,
+      "thumbnails": true,
+      "ocr": true,
+      "redaction": false,
+      "comparison": false,
+      "export": true,
+      "collaboration": false,
+      "aiAssistant": true
+    },
+    "content": {
+      "demoTitle": "AI Document Intelligence",
+      "demoDescription": "Extract data, detect fields, and automate document processing with AI.",
+      "companyTagline": "Intelligence built into every document",
+      "heroText": null,
+      "ctaText": "Extract Data"
+    },
+    "sampleDocuments": [
+      {
+        "id": "invoice-001",
+        "name": "Invoice Template",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Sample invoice for data extraction demo"
+      }
+    ],
+    "toolbar": {
+      "showAnnotationTools": true,
+      "showFormTools": true,
+      "showExportTools": true,
+      "showSearchBar": true,
+      "showThumbnails": true,
+      "position": "top",
+      "customItems": []
+    },
+    "workflow": [
+      {
+        "id": "step-1",
+        "label": "Load Document",
+        "description": "Import document for processing",
+        "toolRequired": null,
+        "order": 1
+      },
+      {
+        "id": "step-2",
+        "label": "AI Extraction",
+        "description": "AI identifies and extracts key fields",
+        "toolRequired": "ocr",
+        "order": 2
+      },
+      {
+        "id": "step-3",
+        "label": "Review Fields",
+        "description": "Verify and correct extracted data",
+        "toolRequired": "forms",
+        "order": 3
+      },
+      {
+        "id": "step-4",
+        "label": "Export JSON",
+        "description": "Export structured data output",
+        "toolRequired": "export",
+        "order": 4
+      }
+    ],
+    "activeSampleDocumentId": "invoice-001"
+  }
+}

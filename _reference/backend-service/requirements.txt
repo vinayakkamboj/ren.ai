@@ -1,0 +1,4 @@
+nutrient-sdk
+fastapi
+uvicorn
+python-multipart

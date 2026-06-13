@@ -1,0 +1,99 @@
+{
+  "id": "construction-workflow",
+  "name": "Construction Workflow Demo",
+  "description": "Blueprint review, site reports, punch lists, and document management for construction projects.",
+  "category": "industry",
+  "tags": ["construction", "blueprints", "site", "reports", "field"],
+  "version": "1.0.0",
+  "thumbnail": null,
+  "previewUrl": null,
+  "estimatedSetupMinutes": 3,
+  "defaultConfig": {
+    "theme": {
+      "primaryColor": "#1a1200",
+      "accentColor": "#f59e0b",
+      "backgroundColor": "#0a0a0a",
+      "fontFamily": "Inter",
+      "logoUrl": null,
+      "companyName": "BuildRight Construction",
+      "industry": "construction",
+      "mode": "dark"
+    },
+    "features": {
+      "annotations": true,
+      "forms": true,
+      "signatures": true,
+      "search": true,
+      "thumbnails": true,
+      "ocr": false,
+      "redaction": false,
+      "comparison": true,
+      "export": true,
+      "collaboration": true,
+      "aiAssistant": false
+    },
+    "content": {
+      "demoTitle": "Field Document Management",
+      "demoDescription": "Review blueprints, manage site reports, and coordinate document workflows from any device.",
+      "companyTagline": "Built for the field",
+      "heroText": null,
+      "ctaText": "Open Blueprint"
+    },
+    "sampleDocuments": [
+      {
+        "id": "blueprint-001",
+        "name": "Site Blueprint",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Architectural plans for Site A"
+      },
+      {
+        "id": "report-001",
+        "name": "Inspection Report",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Weekly site inspection report"
+      }
+    ],
+    "toolbar": {
+      "showAnnotationTools": true,
+      "showFormTools": true,
+      "showExportTools": true,
+      "showSearchBar": true,
+      "showThumbnails": true,
+      "position": "top",
+      "customItems": []
+    },
+    "workflow": [
+      {
+        "id": "step-1",
+        "label": "Load Plans",
+        "description": "Import blueprints or reports",
+        "toolRequired": null,
+        "order": 1
+      },
+      {
+        "id": "step-2",
+        "label": "Field Markup",
+        "description": "Annotate issues and notes on-site",
+        "toolRequired": "annotations",
+        "order": 2
+      },
+      {
+        "id": "step-3",
+        "label": "Punch List",
+        "description": "Complete checklist items",
+        "toolRequired": "forms",
+        "order": 3
+      },
+      {
+        "id": "step-4",
+        "label": "Sign Off",
+        "description": "Manager approval signature",
+        "toolRequired": "signatures",
+        "order": 4
+      }
+    ],
+    "activeSampleDocumentId": "blueprint-001"
+  }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Confirm your Nucode account</title>
+  <!--[if mso]>
+  <noscript>
+    <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: #110d0d; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    a { color: inherit; text-decoration: none; }
+  </style>
+</head>
+<body style="background-color:#110d0d; margin:0; padding:0;">
+
+  <!-- Outer wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#110d0d; padding: 48px 16px;">
+    <tr>
+      <td align="center">
+
+        <!-- Card -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px; background-color:#1a1414; border:1px solid #2a2222; border-radius:20px; overflow:hidden;">
+
+          <!-- Top accent bar -->
+          <tr>
+            <td style="background: linear-gradient(90deg, #c4a882 0%, #a88a66 100%); height:3px; font-size:0; line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Header / Wordmark -->
+          <tr>
+            <td align="center" style="padding: 52px 40px 36px 40px; border-bottom: 1px solid #2a2222;">
+
+              <!-- NUCODE wordmark -->
+              <div style="font-size:72px; font-weight:800; color:#f4f4f5; letter-spacing:-0.05em; line-height:1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">
+                Nucode
+              </div>
+
+              <!-- Tagline -->
+              <div style="margin-top:10px; font-size:12px; color:#52403f; letter-spacing:0.18em; text-transform:uppercase; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                The Nutrient demo platform
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 40px 40px 32px 40px;">
+
+              <!-- Label -->
+              <div style="font-size:11px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:#52403f; margin-bottom:14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                Email confirmation
+              </div>
+
+              <!-- Heading -->
+              <div style="font-size:26px; font-weight:700; color:#f4f4f5; letter-spacing:-0.03em; line-height:1.2; margin-bottom:16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">
+                Confirm your account
+              </div>
+
+              <!-- Body text -->
+              <div style="font-size:14px; color:#71717a; line-height:1.7; margin-bottom:32px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                You&rsquo;re one step away from accessing Nucode. Click the button below to verify your email and activate your account. This link expires in&nbsp;<span style="color:#a1a1aa; font-weight:500;">24 hours</span>.
+              </div>
+
+              <!-- CTA button -->
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="background-color:#c4a882; border-radius:10px;">
+                    <a
+                      href="{{ .ConfirmationURL }}"
+                      style="display:inline-block; padding:14px 32px; font-size:13px; font-weight:600; color:#1a1414; text-decoration:none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; letter-spacing:-0.01em;"
+                    >
+                      Confirm my email
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Divider -->
+              <div style="margin: 32px 0; height:1px; background-color:#2a2222; font-size:0; line-height:0;">&nbsp;</div>
+
+              <!-- Security note -->
+              <div style="font-size:12px; color:#3f3535; line-height:1.6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                If you didn&rsquo;t create a Nucode account, you can safely ignore this email — no account will be activated without clicking the link above.
+              </div>
+
+              <!-- Fallback URL -->
+              <div style="margin-top:20px; padding:14px 16px; background-color:#171212; border:1px solid #2a2222; border-radius:10px;">
+                <div style="font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#3f3535; margin-bottom:6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                  Button not working?
+                </div>
+                <div style="font-size:11px; color:#52403f; word-break:break-all; font-family:'Courier New', Courier, monospace; line-height:1.5;">
+                  {{ .ConfirmationURL }}
+                </div>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 40px 32px 40px; border-top: 1px solid #1f1818;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size:11px; color:#2a2222; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                    &copy; Nucode &mdash; engineered by Vinayak Kamboj
+                  </td>
+                  <td align="right" style="font-size:11px; color:#2a2222; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                    <a href="https://nutrient.io" style="color:#3f3535; text-decoration:none;">nutrient.io</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Card -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

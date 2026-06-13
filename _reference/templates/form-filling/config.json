@@ -1,0 +1,92 @@
+{
+  "id": "form-filling",
+  "name": "Form Filling Demo",
+  "description": "Interactive PDF forms with real-time validation, digital signatures, and automated field population.",
+  "category": "forms",
+  "tags": ["forms", "digital", "signatures", "validation", "e-sign"],
+  "version": "1.0.0",
+  "thumbnail": null,
+  "previewUrl": null,
+  "estimatedSetupMinutes": 2,
+  "defaultConfig": {
+    "theme": {
+      "primaryColor": "#0a1628",
+      "accentColor": "#10b981",
+      "backgroundColor": "#0a0a0a",
+      "fontFamily": "Inter",
+      "logoUrl": null,
+      "companyName": "Acme Corp",
+      "industry": null,
+      "mode": "dark"
+    },
+    "features": {
+      "annotations": false,
+      "forms": true,
+      "signatures": true,
+      "search": true,
+      "thumbnails": false,
+      "ocr": false,
+      "redaction": false,
+      "comparison": false,
+      "export": true,
+      "collaboration": false,
+      "aiAssistant": false
+    },
+    "content": {
+      "demoTitle": "Digital Form Platform",
+      "demoDescription": "Fill, sign, and submit forms digitally with full audit trail.",
+      "companyTagline": "Paperless from end to end",
+      "heroText": null,
+      "ctaText": "Fill Form"
+    },
+    "sampleDocuments": [
+      {
+        "id": "form-001",
+        "name": "Onboarding Form",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Employee onboarding form template"
+      }
+    ],
+    "toolbar": {
+      "showAnnotationTools": false,
+      "showFormTools": true,
+      "showExportTools": true,
+      "showSearchBar": true,
+      "showThumbnails": false,
+      "position": "top",
+      "customItems": []
+    },
+    "workflow": [
+      {
+        "id": "step-1",
+        "label": "Open Form",
+        "description": "Load the PDF form",
+        "toolRequired": null,
+        "order": 1
+      },
+      {
+        "id": "step-2",
+        "label": "Fill Fields",
+        "description": "Complete all form fields",
+        "toolRequired": "forms",
+        "order": 2
+      },
+      {
+        "id": "step-3",
+        "label": "Sign Document",
+        "description": "Add digital signature",
+        "toolRequired": "signatures",
+        "order": 3
+      },
+      {
+        "id": "step-4",
+        "label": "Submit",
+        "description": "Export and submit completed form",
+        "toolRequired": "export",
+        "order": 4
+      }
+    ],
+    "activeSampleDocumentId": "form-001"
+  }
+}

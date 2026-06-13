@@ -1,0 +1,106 @@
+{
+  "id": "healthcare-workflow",
+  "name": "Healthcare Workflow Demo",
+  "description": "HIPAA-ready document workflows for patient intake, clinical records, and consent management.",
+  "category": "industry",
+  "tags": ["healthcare", "hipaa", "patient", "clinical", "forms", "signatures"],
+  "version": "1.0.0",
+  "thumbnail": null,
+  "previewUrl": null,
+  "estimatedSetupMinutes": 3,
+  "defaultConfig": {
+    "theme": {
+      "primaryColor": "#0a1f2e",
+      "accentColor": "#06b6d4",
+      "backgroundColor": "#0a0a0a",
+      "fontFamily": "Inter",
+      "logoUrl": null,
+      "companyName": "MedCenter Health",
+      "industry": "healthcare",
+      "mode": "dark"
+    },
+    "features": {
+      "annotations": true,
+      "forms": true,
+      "signatures": true,
+      "search": true,
+      "thumbnails": true,
+      "ocr": true,
+      "redaction": true,
+      "comparison": false,
+      "export": true,
+      "collaboration": false,
+      "aiAssistant": true
+    },
+    "content": {
+      "demoTitle": "Patient Record Management",
+      "demoDescription": "Secure, compliant document workflows for modern healthcare organizations.",
+      "companyTagline": "Compliance-first document intelligence",
+      "heroText": null,
+      "ctaText": "Open Patient File"
+    },
+    "sampleDocuments": [
+      {
+        "id": "patient-intake-001",
+        "name": "Patient Intake Form",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "New patient registration and medical history"
+      },
+      {
+        "id": "consent-001",
+        "name": "Treatment Consent",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Informed consent for treatment procedures"
+      }
+    ],
+    "toolbar": {
+      "showAnnotationTools": true,
+      "showFormTools": true,
+      "showExportTools": true,
+      "showSearchBar": true,
+      "showThumbnails": true,
+      "position": "top",
+      "customItems": []
+    },
+    "workflow": [
+      {
+        "id": "step-1",
+        "label": "Patient Check-in",
+        "description": "Verify and load patient documents",
+        "toolRequired": null,
+        "order": 1
+      },
+      {
+        "id": "step-2",
+        "label": "Form Completion",
+        "description": "Patient fills intake and consent forms",
+        "toolRequired": "forms",
+        "order": 2
+      },
+      {
+        "id": "step-3",
+        "label": "Physician Review",
+        "description": "Clinician annotates and approves records",
+        "toolRequired": "annotations",
+        "order": 3
+      },
+      {
+        "id": "step-4",
+        "label": "Digital Signature",
+        "description": "Patient and provider sign documents",
+        "toolRequired": "signatures",
+        "order": 4
+      },
+      {
+        "id": "step-5",
+        "label": "Archive & Redact",
+        "description": "Redact sensitive fields and archive",
+        "toolRequired": "redaction",
+        "order": 5
+      }
+    ],
+    "activeSampleDocumentId": "patient-intake-001"
+  }
+}

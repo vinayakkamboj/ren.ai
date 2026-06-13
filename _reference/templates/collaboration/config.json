@@ -1,0 +1,92 @@
+{
+  "id": "collaboration",
+  "name": "Collaboration Demo",
+  "description": "Real-time collaborative document review with shared annotations, comments, and approval workflows.",
+  "category": "collaboration",
+  "tags": ["collaboration", "real-time", "comments", "team", "review"],
+  "version": "1.0.0",
+  "thumbnail": null,
+  "previewUrl": null,
+  "estimatedSetupMinutes": 2,
+  "defaultConfig": {
+    "theme": {
+      "primaryColor": "#0d1117",
+      "accentColor": "#f97316",
+      "backgroundColor": "#0a0a0a",
+      "fontFamily": "Inter",
+      "logoUrl": null,
+      "companyName": "Acme Corp",
+      "industry": null,
+      "mode": "dark"
+    },
+    "features": {
+      "annotations": true,
+      "forms": false,
+      "signatures": true,
+      "search": true,
+      "thumbnails": true,
+      "ocr": false,
+      "redaction": false,
+      "comparison": false,
+      "export": true,
+      "collaboration": true,
+      "aiAssistant": false
+    },
+    "content": {
+      "demoTitle": "Collaborative Review Platform",
+      "demoDescription": "Review documents together in real time with your team.",
+      "companyTagline": "One document, one team, one workflow",
+      "heroText": null,
+      "ctaText": "Invite Team"
+    },
+    "sampleDocuments": [
+      {
+        "id": "collab-doc-001",
+        "name": "Quarterly Report",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Q3 report for collaborative review"
+      }
+    ],
+    "toolbar": {
+      "showAnnotationTools": true,
+      "showFormTools": false,
+      "showExportTools": true,
+      "showSearchBar": true,
+      "showThumbnails": true,
+      "position": "top",
+      "customItems": []
+    },
+    "workflow": [
+      {
+        "id": "step-1",
+        "label": "Share Document",
+        "description": "Invite collaborators to the session",
+        "toolRequired": null,
+        "order": 1
+      },
+      {
+        "id": "step-2",
+        "label": "Joint Review",
+        "description": "All reviewers annotate simultaneously",
+        "toolRequired": "annotations",
+        "order": 2
+      },
+      {
+        "id": "step-3",
+        "label": "Resolve Comments",
+        "description": "Address and resolve all feedback",
+        "toolRequired": "annotations",
+        "order": 3
+      },
+      {
+        "id": "step-4",
+        "label": "Final Approval",
+        "description": "Stakeholders sign off",
+        "toolRequired": "signatures",
+        "order": 4
+      }
+    ],
+    "activeSampleDocumentId": "collab-doc-001"
+  }
+}

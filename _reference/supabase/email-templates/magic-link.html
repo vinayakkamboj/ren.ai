@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Sign in to Nucode</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: #110d0d; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    a { color: inherit; text-decoration: none; }
+  </style>
+</head>
+<body style="background-color:#110d0d; margin:0; padding:0;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#110d0d; padding: 48px 16px;">
+    <tr>
+      <td align="center">
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px; background-color:#1a1414; border:1px solid #2a2222; border-radius:20px; overflow:hidden;">
+
+          <tr>
+            <td style="background: linear-gradient(90deg, #c4a882 0%, #a88a66 100%); height:3px; font-size:0; line-height:0;">&nbsp;</td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding: 52px 40px 36px 40px; border-bottom: 1px solid #2a2222;">
+              <div style="font-size:72px; font-weight:800; color:#f4f4f5; letter-spacing:-0.05em; line-height:1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;">
+                Nucode
+              </div>
+              <div style="margin-top:10px; font-size:12px; color:#52403f; letter-spacing:0.18em; text-transform:uppercase; font-weight:600;">
+                The Nutrient demo platform
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 40px 40px 32px 40px;">
+
+              <div style="font-size:11px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:#52403f; margin-bottom:14px;">
+                Sign-in link
+              </div>
+
+              <div style="font-size:26px; font-weight:700; color:#f4f4f5; letter-spacing:-0.03em; line-height:1.2; margin-bottom:16px;">
+                Here&rsquo;s your sign-in link
+              </div>
+
+              <div style="font-size:14px; color:#71717a; line-height:1.7; margin-bottom:32px;">
+                Click below to sign in to your Nucode account. This link is valid for <span style="color:#a1a1aa; font-weight:500;">1 hour</span> and can only be used once.
+              </div>
+
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="background-color:#c4a882; border-radius:10px;">
+                    <a
+                      href="{{ .ConfirmationURL }}"
+                      style="display:inline-block; padding:14px 32px; font-size:13px; font-weight:600; color:#1a1414; text-decoration:none; letter-spacing:-0.01em;"
+                    >
+                      Sign in to Nucode
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <div style="margin: 32px 0; height:1px; background-color:#2a2222; font-size:0; line-height:0;">&nbsp;</div>
+
+              <div style="font-size:12px; color:#3f3535; line-height:1.6;">
+                If you didn&rsquo;t request this link, you can ignore this email. Your account remains secure.
+              </div>
+
+              <div style="margin-top:20px; padding:14px 16px; background-color:#171212; border:1px solid #2a2222; border-radius:10px;">
+                <div style="font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#3f3535; margin-bottom:6px;">
+                  Button not working?
+                </div>
+                <div style="font-size:11px; color:#52403f; word-break:break-all; font-family:'Courier New', Courier, monospace; line-height:1.5;">
+                  {{ .ConfirmationURL }}
+                </div>
+              </div>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 20px 40px 32px 40px; border-top: 1px solid #1f1818;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size:11px; color:#2a2222;">
+                    &copy; Nucode &mdash; engineered by Vinayak Kamboj
+                  </td>
+                  <td align="right" style="font-size:11px; color:#2a2222;">
+                    <a href="https://nutrient.io" style="color:#3f3535; text-decoration:none;">nutrient.io</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

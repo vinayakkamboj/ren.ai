@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+    /* Dark mode as default — this is a dark-first product */
+    --background: 0 13% 9%;
+    --foreground: 0 0% 96%;
+
+    --card: 0 10% 11%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 0 10% 11%;
+    --popover-foreground: 0 0% 96%;
+
+    /* --primary: 217 91% 60%; */           /* old: blue */
+    /* --primary-foreground: 0 0% 100%; */  /* old: white text on blue */
+    --primary: 34 36% 64%;                  /* amber #c4a882 */
+    --primary-foreground: 0 13% 9%;         /* dark text on amber */
+
+    --secondary: 0 9% 13%;
+    --secondary-foreground: 0 0% 80%;
+
+    --muted: 0 8% 15%;
+    --muted-foreground: 240 4% 55%;
+
+    /* --accent: 217 91% 60%; */            /* old: blue */
+    /* --accent-foreground: 0 0% 100%; */   /* old: white */
+    --accent: 34 36% 64%;                   /* amber */
+    --accent-foreground: 0 13% 9%;          /* dark text on amber */
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 8% 18%;
+    --input: 0 8% 15%;
+    /* --ring: 217 91% 60%; */              /* old: blue focus ring */
+    --ring: 34 36% 64%;                     /* amber focus ring */
+
+    --surface: 0 10% 11%;
+    --surface-elevated: 0 9% 13%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background-color: #1a1414;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  /* Selection */
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .surface {
+    @apply bg-surface border border-border;
+  }
+
+  .surface-elevated {
+    @apply bg-surface-elevated border border-border;
+  }
+
+  .focus-ring {
+    @apply outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  .glass {
+    backdrop-filter: blur(12px);
+    background: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--border));
+  }
+}

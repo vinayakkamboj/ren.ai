@@ -1,0 +1,8 @@
+{
+  "name": "nucode-node-runner",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@nutrient-sdk/node": "latest"
+  }
+}

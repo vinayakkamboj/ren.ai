@@ -1,0 +1,85 @@
+{
+  "id": "pdf-annotation",
+  "name": "PDF Annotation Demo",
+  "description": "Full-featured PDF annotation and review workflow with highlights, notes, and markup tools.",
+  "category": "document",
+  "tags": ["annotation", "review", "markup", "comments"],
+  "version": "1.0.0",
+  "thumbnail": null,
+  "previewUrl": null,
+  "estimatedSetupMinutes": 2,
+  "defaultConfig": {
+    "theme": {
+      "primaryColor": "#0f172a",
+      "accentColor": "#3b82f6",
+      "backgroundColor": "#0a0a0a",
+      "fontFamily": "Inter",
+      "logoUrl": null,
+      "companyName": "Acme Corp",
+      "industry": null,
+      "mode": "dark"
+    },
+    "features": {
+      "annotations": true,
+      "forms": false,
+      "signatures": false,
+      "search": true,
+      "thumbnails": true,
+      "ocr": false,
+      "redaction": false,
+      "comparison": false,
+      "export": true,
+      "collaboration": false,
+      "aiAssistant": false
+    },
+    "content": {
+      "demoTitle": "Document Review Platform",
+      "demoDescription": "Streamline your document review workflow with powerful annotation tools.",
+      "companyTagline": "Faster reviews, better outcomes",
+      "heroText": null,
+      "ctaText": "Start Reviewing"
+    },
+    "sampleDocuments": [
+      {
+        "id": "contract-001",
+        "name": "Service Agreement",
+        "url": "https://www.nutrient.io/downloads/nutrient-web-demo.pdf",
+        "type": "pdf",
+        "description": "Standard service agreement template"
+      }
+    ],
+    "toolbar": {
+      "showAnnotationTools": true,
+      "showFormTools": false,
+      "showExportTools": true,
+      "showSearchBar": true,
+      "showThumbnails": true,
+      "position": "top",
+      "customItems": []
+    },
+    "workflow": [
+      {
+        "id": "step-1",
+        "label": "Upload Document",
+        "description": "Load document into the viewer",
+        "toolRequired": null,
+        "order": 1
+      },
+      {
+        "id": "step-2",
+        "label": "Review & Annotate",
+        "description": "Add highlights, notes, and comments",
+        "toolRequired": "annotations",
+        "order": 2
+      },
+      {
+        "id": "step-3",
+        "label": "Export Reviewed",
+        "description": "Download the annotated document",
+        "toolRequired": "export",
+        "order": 3
+      }
+    ],
+    "activeSampleDocumentId": "contract-001"
+  }
+}
