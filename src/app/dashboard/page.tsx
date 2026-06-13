@@ -1,224 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, FolderGit2, Github, Sparkles, Zap } from "lucide-react";
-import { PageHeader, StatusBadge } from "@/components/platform/widgets";
+import { FolderGit2, Github, Sparkles, Users, Zap } from "lucide-react";
+import { StatusBadge } from "@/components/platform/widgets";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-/** Soft monthly build allowance shown in the usage strip (free plan). */
-const MONTHLY_BUILD_ALLOWANCE = 50;
-
-function startOfMonthISO(): string {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-}
-
-export default async function OverviewPage() {
-  const configured = isSupabaseConfigured();
-
-  let projectCount = 0;
-  let repositoryCount = 0;
-  let buildsThisMonth = 0;
-  let recentProjects: Array<{
-    id: string;
-    name: string;
-    kind: string;
-    status: string;
-    updated_at: string;
-  }> = [];
-
-  if (configured) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
-
-    const [projectsResult, repositoriesResult, monthResult, recentResult] =
-      await Promise.all([
-        supabase
-          .from("projects")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", user.id),
-        supabase
-          .from("repositories")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", user.id),
-        supabase
-          .from("projects")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .gte("updated_at", startOfMonthISO()),
-        supabase
-          .from("projects")
-          .select("id, name, kind, status, updated_at")
-          .eq("user_id", user.id)
-          .order("updated_at", { ascending: false })
-          .limit(6),
-      ]);
-
-    projectCount = projectsResult.count ?? 0;
-    repositoryCount = repositoriesResult.count ?? 0;
-    buildsThisMonth = monthResult.count ?? 0;
-    recentProjects = recentResult.data ?? [];
-  }
-
-  const usedPct = Math.min(
-    100,
-    Math.round((buildsThisMonth / MONTHLY_BUILD_ALLOWANCE) * 100),
-  );
-
-  return (
-    <>
-      <PageHeader
-        title="Overview"
-        description="Build a new app from a prompt, or open one on a repository you've connected."
-      />
-
-      {/* Usage strip — on top */}
-      <div className="rounded-xl border border-carbon-line bg-carbon-raised">
-        <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-lg border border-carbon-line bg-carbon">
-              <Zap className="size-4 text-brass" strokeWidth={1.7} />
-            </div>
-            <div>
-              <p className="text-[13px] font-medium text-dusk">Free plan</p>
-              <p className="text-[12px] text-dusk-muted">
-                {buildsThisMonth} of {MONTHLY_BUILD_ALLOWANCE} builds this month
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-1 items-center gap-6 sm:justify-end">
-            <div className="hidden min-w-[180px] flex-1 sm:block">
-              <div className="h-1.5 overflow-hidden rounded-full bg-carbon-high">
-                <div
-                  className="h-full rounded-full bg-brass transition-all"
-                  style={{ width: `${usedPct}%` }}
-                />
-              </div>
-            </div>
-            <StripStat label="Projects" value={projectCount} />
-            <StripStat label="Repositories" value={repositoryCount} />
-          </div>
-        </div>
-      </div>
-
-      {/* Start options */}
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <StartCard
-          icon={Sparkles}
-          title="Start a new app"
-          detail="Describe what you want — Ren Code scaffolds the pages, components, and state, and renders it live."
-          href="/dashboard/projects/new?mode=new"
-          cta="New app"
-        />
-        <StartCard
-          icon={Github}
-          title="Build on a GitHub repo"
-          detail="Open a connected repository in the workspace. Ren Code reads the code and edits it with you."
-          href="/dashboard/projects/new?mode=repository"
-          cta="Use a repository"
-        />
-      </div>
-
-      {/* Recent projects */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-[1.2rem] text-dusk">Recent projects</h2>
-          <Link
-            href="/dashboard/projects"
-            className="text-[12.5px] text-dusk-muted transition-colors hover:text-brass"
-          >
-            View all
-          </Link>
-        </div>
-
-        {recentProjects.length === 0 ? (
-          <div className="mt-3 flex flex-col items-center justify-center rounded-xl border border-carbon-line bg-carbon-raised py-12 text-center">
-            <FolderGit2 className="size-5 text-dusk-faint" />
-            <p className="mt-3 max-w-[40ch] text-[13px] text-dusk-muted">
-              Your projects will appear here once you start building.
-            </p>
-          </div>
-        ) : (
-          <ul className="mt-3 divide-y divide-carbon-line/60 overflow-hidden rounded-xl border border-carbon-line bg-carbon-raised">
-            {recentProjects.map((p) => (
-              <li key={p.id}>
-                <Link
-                  href={`/workspace/${p.id}`}
-                  className="flex items-center justify-between gap-4 px-5 py-3.5 transition-colors duration-150 hover:bg-carbon-high/40"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <FolderGit2 className="size-4 shrink-0 text-dusk-faint" />
-                    <span className="truncate text-[13.5px] font-medium text-dusk">
-                      {p.name}
-                    </span>
-                    <span className="hidden shrink-0 text-[12px] text-dusk-faint sm:block">
-                      {p.kind === "new" ? "New build" : "Repository"}
-                    </span>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-3">
-                    <StatusBadge status={p.status} />
-                    <span className="hidden text-[12px] text-dusk-faint md:block">
-                      {relativeTime(p.updated_at)}
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
-  );
-}
-
-function StripStat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="text-right">
-      <p className="font-serif text-[1.3rem] leading-none text-dusk tnum">{value}</p>
-      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.12em] text-dusk-faint">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function StartCard({
-  icon: Icon,
-  title,
-  detail,
-  href,
-  cta,
-}: {
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-  title: string;
-  detail: string;
-  href: string;
-  cta: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group flex flex-col rounded-xl border border-carbon-line bg-carbon-raised p-6 transition-colors duration-200 hover:border-carbon-line-strong hover:bg-carbon-high/50"
-    >
-      <div className="flex size-11 items-center justify-center rounded-xl border border-carbon-line bg-carbon">
-        <Icon className="size-5 text-brass" strokeWidth={1.6} />
-      </div>
-      <h3 className="mt-5 font-serif text-[1.2rem] text-dusk">{title}</h3>
-      <p className="mt-2 max-w-[42ch] text-[13.5px] leading-relaxed text-dusk-muted">
-        {detail}
-      </p>
-      <span className="mt-6 inline-flex items-center gap-1.5 text-[13px] font-medium text-brass">
-        {cta}
-        <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-      </span>
-    </Link>
-  );
-}
+const MONTHLY_ALLOWANCE = 50;
 
 function relativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -226,4 +14,219 @@ function relativeTime(dateStr: string): string {
   if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
   if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
   return `${Math.floor(diff / 86_400_000)}d ago`;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  kind: string;
+  status: string;
+  updated_at: string;
+  shared?: boolean;
+}
+
+export default async function DashboardPage() {
+  let projectCount = 0;
+  let repositoryCount = 0;
+  let buildsThisMonth = 0;
+  let projects: Project[] = [];
+  let sharedProjects: Project[] = [];
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+
+    const startOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1,
+    ).toISOString();
+
+    const [pResult, rResult, bResult, listResult] = await Promise.all([
+      supabase
+        .from("projects")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id),
+      supabase
+        .from("repositories")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id),
+      supabase
+        .from("projects")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("updated_at", startOfMonth),
+      supabase
+        .from("projects")
+        .select("id, name, kind, status, updated_at")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false }),
+    ]);
+
+    projectCount = pResult.count ?? 0;
+    repositoryCount = rResult.count ?? 0;
+    buildsThisMonth = bResult.count ?? 0;
+    projects = listResult.data ?? [];
+
+    // Shared projects (best-effort — table may not exist yet)
+    try {
+      const { data: collabs } = await supabase
+        .from("project_collaborators")
+        .select("project_id, projects(id, name, kind, status, updated_at)")
+        .eq("invited_email", user.email)
+        .eq("status", "accepted");
+
+      if (collabs) {
+        sharedProjects = collabs
+          .map((c) => {
+            const p = c.projects as unknown as Project | null;
+            return p ? { ...p, shared: true } : null;
+          })
+          .filter(Boolean) as Project[];
+      }
+    } catch {
+      // table doesn't exist yet
+    }
+  }
+
+  const usedPct = Math.min(
+    100,
+    Math.round((buildsThisMonth / MONTHLY_ALLOWANCE) * 100),
+  );
+
+  return (
+    <div className="space-y-8">
+      {/* Usage strip */}
+      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-carbon-line bg-carbon-raised px-5 py-3">
+        <div className="flex items-center gap-2">
+          <Zap className="size-4 text-brass" strokeWidth={1.7} />
+          <span className="text-[13px] font-medium text-dusk">Free plan</span>
+          <span className="text-[12px] text-dusk-faint">·</span>
+          <span className="text-[12px] text-dusk-muted">
+            {buildsThisMonth} of {MONTHLY_ALLOWANCE} builds this month
+          </span>
+        </div>
+        <div className="h-1.5 min-w-[120px] flex-1 overflow-hidden rounded-full bg-carbon-high sm:max-w-[160px]">
+          <div
+            className="h-full rounded-full bg-brass transition-all"
+            style={{ width: `${usedPct}%` }}
+          />
+        </div>
+        <div className="ml-auto flex items-center gap-4 text-[12px] text-dusk-faint">
+          <span>{projectCount} project{projectCount !== 1 ? "s" : ""}</span>
+          <span>{repositoryCount} repo{repositoryCount !== 1 ? "s" : ""}</span>
+        </div>
+      </div>
+
+      {/* Your Projects */}
+      <section>
+        <div className="mb-5 flex items-center justify-between">
+          <h1 className="font-serif text-[1.5rem] text-dusk">Your Projects</h1>
+          <Link
+            href="/dashboard/projects/new"
+            className="flex h-8 items-center gap-1.5 rounded-lg bg-brass px-3 text-[12.5px] font-medium text-carbon transition-colors hover:bg-brass-deep"
+          >
+            + New project
+          </Link>
+        </div>
+
+        {projects.length === 0 ? (
+          <EmptyProjects />
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {projects.map((p) => (
+              <ProjectCard key={p.id} project={p} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Shared with you */}
+      {sharedProjects.length > 0 && (
+        <section>
+          <div className="mb-5 flex items-center gap-2">
+            <Users className="size-4 text-dusk-faint" />
+            <h2 className="font-serif text-[1.2rem] text-dusk">Shared with you</h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {sharedProjects.map((p) => (
+              <ProjectCard key={p.id} project={p} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <Link
+      href={`/workspace/${project.id}`}
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-carbon-line bg-carbon-raised p-4 transition-all duration-150 hover:border-carbon-line-strong hover:bg-carbon-high/50"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          {project.kind === "new" ? (
+            <Sparkles className="size-4 shrink-0 text-brass" />
+          ) : (
+            <Github className="size-4 shrink-0 text-dusk-faint" />
+          )}
+          <span className="truncate text-[14px] font-medium text-dusk">
+            {project.name}
+          </span>
+        </div>
+        <StatusBadge status={project.status} />
+      </div>
+
+      <p className="mt-3 text-[12px] text-dusk-faint">
+        {project.kind === "new" ? "New build" : "Repository"}
+      </p>
+      <p className="mt-0.5 text-[11.5px] text-dusk-faint/60">
+        Updated {relativeTime(project.updated_at)}
+      </p>
+
+      {project.shared && (
+        <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full bg-carbon-high px-2 py-0.5 text-[11px] text-dusk-muted">
+          <Users className="size-3" /> Shared
+        </span>
+      )}
+
+      {/* hover open CTA */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-carbon/70 opacity-0 backdrop-blur-[1px] transition-opacity duration-150 group-hover:opacity-100">
+        <span className="rounded-lg bg-brass px-4 py-2 text-[13px] font-medium text-carbon shadow-lg">
+          Open
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function EmptyProjects() {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-xl border border-carbon-line border-dashed bg-carbon-raised py-16 text-center">
+      <FolderGit2 className="size-8 text-dusk-faint/40" />
+      <p className="mt-4 text-[14px] font-medium text-dusk">No projects yet</p>
+      <p className="mt-1.5 max-w-[36ch] text-[13px] text-dusk-muted">
+        Start from a prompt or connect an existing GitHub repository.
+      </p>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <Link
+          href="/dashboard/projects/new?mode=new"
+          className="flex h-9 items-center gap-2 rounded-lg bg-brass px-4 text-[13px] font-medium text-carbon transition-colors hover:bg-brass-deep"
+        >
+          <Sparkles className="size-3.5" />
+          Start a new app
+        </Link>
+        <Link
+          href="/dashboard/projects/new?mode=repository"
+          className="flex h-9 items-center gap-2 rounded-lg border border-carbon-line bg-carbon px-4 text-[13px] text-dusk-muted transition-colors hover:border-carbon-line-strong hover:text-dusk"
+        >
+          <Github className="size-3.5" />
+          Use a repository
+        </Link>
+      </div>
+    </div>
+  );
 }

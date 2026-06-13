@@ -3,20 +3,31 @@
 /**
  * Workspace shell — the full build surface for one project: chat on the left,
  * and a center that toggles between the Monaco editor, the live preview, or a
- * split of both. Initializes the workspace store from server-provided files
- * (falling back to any locally-persisted session) on mount.
+ * split of both.
  */
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { ArrowLeft, Code2, Columns2, Eye, Github } from "lucide-react";
+import {
+  ArrowLeft,
+  Code2,
+  Columns2,
+  Download,
+  Eye,
+  Github,
+  Link2,
+  UserPlus,
+} from "lucide-react";
+import { toast } from "sonner";
 import { RenMark } from "@/components/ui/wordmark";
 import { ChatPanel } from "@/components/workspace/chat-panel";
 import { FileTree } from "@/components/workspace/file-tree";
 import { EditorPanel } from "@/components/workspace/editor-panel";
 import { LivePreview } from "@/components/workspace/preview";
+import { InviteModal } from "@/components/workspace/invite-modal";
 import { useWorkspaceStore, loadPersisted } from "@/lib/builder/store";
+import { downloadProjectZip } from "@/lib/builder/download";
 import type { ProjectFile, BuildMessage } from "@/lib/builder/types";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +53,7 @@ export function WorkspaceShell({
   const viewerKey = useWorkspaceStore((s) => s.viewerKey);
   const [centerView, setCenterView] = useState<CenterView>("preview");
   const [ready, setReady] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   useEffect(() => {
     const persisted = loadPersisted(projectId);
@@ -53,31 +65,96 @@ export function WorkspaceShell({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
+  function handleShare() {
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => toast.success("Link copied to clipboard"))
+      .catch(() => toast.error("Could not copy link"));
+  }
+
+  function handleDownload() {
+    if (!projectFiles.length) {
+      toast.error("No files to download yet");
+      return;
+    }
+    downloadProjectZip(projectName, projectFiles);
+    toast.success("Downloading project…");
+  }
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-carbon text-dusk">
       {/* Top bar */}
-      <header className="flex h-12 shrink-0 items-center justify-between border-b border-carbon-line px-4">
-        <div className="flex items-center gap-3">
+      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-carbon-line px-4">
+        {/* Left: back + project name */}
+        <div className="flex min-w-0 items-center gap-3">
           <Link
-            href="/dashboard/projects"
-            className="flex items-center gap-1.5 text-dusk-faint transition-colors hover:text-dusk"
+            href="/dashboard"
+            className="flex shrink-0 items-center gap-1.5 text-dusk-faint transition-colors hover:text-dusk"
           >
             <ArrowLeft className="size-4" />
           </Link>
-          <RenMark className="size-4 text-brass" />
-          <span className="text-[13px] font-medium text-dusk">{projectName}</span>
+          <RenMark className="size-4 shrink-0 text-brass" />
+          <span className="truncate text-[13px] font-medium text-dusk">
+            {projectName}
+          </span>
           {repoFullName && (
-            <span className="flex items-center gap-1.5 rounded-full border border-carbon-line px-2 py-0.5 font-mono text-[11px] text-dusk-muted">
+            <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-carbon-line px-2 py-0.5 font-mono text-[11px] text-dusk-muted sm:flex">
               <Github className="size-3" />
               {repoFullName}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-0.5 rounded-lg border border-carbon-line bg-carbon-raised p-0.5">
-          <ViewToggle active={centerView === "editor"} onClick={() => setCenterView("editor")} icon={<Code2 className="size-3.5" />} label="Code" />
-          <ViewToggle active={centerView === "split"} onClick={() => setCenterView("split")} icon={<Columns2 className="size-3.5" />} label="Split" />
-          <ViewToggle active={centerView === "preview"} onClick={() => setCenterView("preview")} icon={<Eye className="size-3.5" />} label="Preview" />
+        {/* Center: view toggle */}
+        <div className="flex shrink-0 items-center gap-0.5 rounded-lg border border-carbon-line bg-carbon-raised p-0.5">
+          <ViewToggle
+            active={centerView === "editor"}
+            onClick={() => setCenterView("editor")}
+            icon={<Code2 className="size-3.5" />}
+            label="Code"
+          />
+          <ViewToggle
+            active={centerView === "split"}
+            onClick={() => setCenterView("split")}
+            icon={<Columns2 className="size-3.5" />}
+            label="Split"
+          />
+          <ViewToggle
+            active={centerView === "preview"}
+            onClick={() => setCenterView("preview")}
+            icon={<Eye className="size-3.5" />}
+            label="Preview"
+          />
+        </div>
+
+        {/* Right: toolbar actions */}
+        <div className="flex shrink-0 items-center gap-1">
+          <ToolbarButton
+            icon={<Link2 className="size-3.5" />}
+            label="Share"
+            onClick={handleShare}
+          />
+          <ToolbarButton
+            icon={<Download className="size-3.5" />}
+            label="Download"
+            onClick={handleDownload}
+          />
+          <ToolbarButton
+            icon={<UserPlus className="size-3.5" />}
+            label="Invite"
+            onClick={() => setInviteOpen(true)}
+          />
+          {repoFullName && (
+            <ToolbarButton
+              icon={<Github className="size-3.5" />}
+              label="Push"
+              onClick={() =>
+                toast.info("GitHub push coming soon", {
+                  description: "Auto-commit & push to your connected repo.",
+                })
+              }
+            />
+          )}
         </div>
       </header>
 
@@ -110,10 +187,15 @@ export function WorkspaceShell({
                   <div
                     className={cn(
                       "h-full",
-                      centerView === "split" ? "w-1/2 border-l border-carbon-line" : "flex-1",
+                      centerView === "split"
+                        ? "w-1/2 border-l border-carbon-line"
+                        : "flex-1",
                     )}
                   >
-                    <LivePreview projectFiles={projectFiles} viewerKey={viewerKey} />
+                    <LivePreview
+                      projectFiles={projectFiles}
+                      viewerKey={viewerKey}
+                    />
                   </div>
                 )}
               </div>
@@ -121,6 +203,13 @@ export function WorkspaceShell({
           </Panel>
         </PanelGroup>
       </div>
+
+      {inviteOpen && (
+        <InviteModal
+          projectId={projectId}
+          onClose={() => setInviteOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -146,6 +235,27 @@ function ViewToggle({
     >
       {icon}
       {label}
+    </button>
+  );
+}
+
+function ToolbarButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      title={label}
+      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11.5px] text-dusk-faint transition-colors hover:bg-carbon-raised hover:text-dusk"
+    >
+      {icon}
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }
