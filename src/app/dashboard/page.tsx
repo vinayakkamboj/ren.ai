@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FolderGit2, Github, Sparkles, Users, Zap } from "lucide-react";
 import { StatusBadge } from "@/components/platform/widgets";
+import { ProjectCardActions } from "@/components/platform/project-card-actions";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -69,7 +70,6 @@ export default async function DashboardPage() {
     buildsThisMonth = bResult.count ?? 0;
     projects = listResult.data ?? [];
 
-    // Shared projects (best-effort — table may not exist yet)
     try {
       const { data: collabs } = await supabase
         .from("project_collaborators")
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
           .filter(Boolean) as Project[];
       }
     } catch {
-      // table doesn't exist yet
+      /* table may not exist */
     }
   }
 
@@ -142,7 +142,6 @@ export default async function DashboardPage() {
         )}
       </section>
 
-      {/* Shared with you */}
       {sharedProjects.length > 0 && (
         <section>
           <div className="mb-5 flex items-center gap-2">
@@ -162,50 +161,45 @@ export default async function DashboardPage() {
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <Link
-      href={`/workspace/${project.id}`}
-      className="group relative flex flex-col overflow-hidden rounded-xl border border-carbon-line bg-carbon-raised p-4 transition-all duration-150 hover:border-carbon-line-strong hover:bg-carbon-high/50"
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          {project.kind === "new" ? (
-            <Sparkles className="size-4 shrink-0 text-brass" />
-          ) : (
-            <Github className="size-4 shrink-0 text-dusk-faint" />
-          )}
-          <span className="truncate text-[14px] font-medium text-dusk">
-            {project.name}
-          </span>
+    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-carbon-line bg-carbon-raised transition-all duration-150 hover:border-carbon-line-strong hover:bg-carbon-high/50">
+      <Link href={`/workspace/${project.id}`} className="flex flex-1 flex-col p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            {project.kind === "new" ? (
+              <Sparkles className="size-4 shrink-0 text-brass" />
+            ) : (
+              <Github className="size-4 shrink-0 text-dusk-faint" />
+            )}
+            <span className="truncate text-[14px] font-medium text-dusk">
+              {project.name}
+            </span>
+          </div>
+          <StatusBadge status={project.status} />
         </div>
-        <StatusBadge status={project.status} />
+        <p className="mt-3 text-[12px] text-dusk-faint">
+          {project.kind === "new" ? "New build" : "Repository"}
+        </p>
+        <p className="mt-0.5 text-[11.5px] text-dusk-faint/60">
+          Updated {relativeTime(project.updated_at)}
+        </p>
+        {project.shared && (
+          <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full bg-carbon-high px-2 py-0.5 text-[11px] text-dusk-muted">
+            <Users className="size-3" /> Shared
+          </span>
+        )}
+      </Link>
+
+      {/* Actions menu */}
+      <div className="absolute right-3 top-3">
+        <ProjectCardActions projectId={project.id} projectName={project.name} />
       </div>
-
-      <p className="mt-3 text-[12px] text-dusk-faint">
-        {project.kind === "new" ? "New build" : "Repository"}
-      </p>
-      <p className="mt-0.5 text-[11.5px] text-dusk-faint/60">
-        Updated {relativeTime(project.updated_at)}
-      </p>
-
-      {project.shared && (
-        <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full bg-carbon-high px-2 py-0.5 text-[11px] text-dusk-muted">
-          <Users className="size-3" /> Shared
-        </span>
-      )}
-
-      {/* hover open CTA */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-carbon/70 opacity-0 backdrop-blur-[1px] transition-opacity duration-150 group-hover:opacity-100">
-        <span className="rounded-lg bg-brass px-4 py-2 text-[13px] font-medium text-carbon shadow-lg">
-          Open
-        </span>
-      </div>
-    </Link>
+    </div>
   );
 }
 
 function EmptyProjects() {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-carbon-line border-dashed bg-carbon-raised py-16 text-center">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-carbon-line bg-carbon-raised py-16 text-center">
       <FolderGit2 className="size-8 text-dusk-faint/40" />
       <p className="mt-4 text-[14px] font-medium text-dusk">No projects yet</p>
       <p className="mt-1.5 max-w-[36ch] text-[13px] text-dusk-muted">

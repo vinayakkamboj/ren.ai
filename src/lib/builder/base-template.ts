@@ -126,8 +126,9 @@ const INDEX_CSS = `@import url("https://fonts.googleapis.com/css2?family=Inter:w
   --ring: 38 45% 62%;
 }
 
-* { box-sizing: border-box; border-color: hsl(var(--border)); }
-html, body, #root { width: 100%; min-height: 100%; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; border-color: hsl(var(--border)); }
+html, body { width: 100%; height: 100%; }
+#root { width: 100%; height: 100%; display: flex; flex-direction: column; }
 body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   background: hsl(var(--background));
