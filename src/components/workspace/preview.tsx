@@ -2,76 +2,59 @@
 
 /**
  * Live preview — runs the generated project files in Sandpack.
- * Includes a bottom status bar with Console and Dependencies tabs.
+ * The loading overlay is tied to Sandpack's real bundler state (it clears the
+ * moment compilation reports "done"), and a collapsible bottom bar exposes the
+ * console output and the installed dependency list.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   SandpackProvider,
   SandpackPreview as SandpackPreviewPane,
   SandpackConsole,
+  useSandpack,
 } from "@codesandbox/sandpack-react";
-import { Check, ChevronDown, ChevronUp, Loader2, Package, Terminal } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Package, Terminal } from "lucide-react";
 import { STANDARD_DEPENDENCIES } from "@/lib/builder/base-template";
 import type { ProjectFile } from "@/lib/builder/types";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 
 interface PreviewProps {
   projectFiles: ProjectFile[];
   viewerKey: number;
 }
 
-const LOAD_STEPS = [
-  "Starting sandbox",
-  "Installing packages",
-  "Compiling app",
-  "Rendering",
-];
-
-function SandpackLoader({ viewerKey }: { viewerKey: number }) {
-  const [step, setStep] = useState(0);
-  const [visible, setVisible] = useState(true);
+/**
+ * Overlay shown while the sandbox boots. It listens to the real Sandpack
+ * bundler messages and clears as soon as the app is compiled and running, so
+ * the perceived wait is exactly the actual wait — no artificial delay.
+ */
+function BootOverlay() {
+  const { listen } = useSandpack();
+  const [done, setDone] = useState(false);
+  const [label, setLabel] = useState("Starting sandbox");
 
   useEffect(() => {
-    setStep(0);
-    setVisible(true);
-    const timers = [
-      setTimeout(() => setStep(1), 900),
-      setTimeout(() => setStep(2), 2400),
-      setTimeout(() => setStep(3), 3800),
-      setTimeout(() => setVisible(false), 5200),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, [viewerKey]);
+    const stop = listen((msg) => {
+      if (msg.type === "start") setLabel("Compiling app");
+      if (msg.type === "status" && "status" in msg) {
+        const s = (msg as { status?: string }).status;
+        if (s === "installing-dependencies") setLabel("Installing packages");
+        else if (s === "transpiling") setLabel("Compiling app");
+      }
+      // "done" fires once the bundle is built and rendered.
+      if (msg.type === "done") setDone(true);
+    });
+    return stop;
+  }, [listen]);
 
-  if (!visible) return null;
+  if (done) return null;
 
   return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-5 bg-white">
-      <div className="space-y-2.5">
-        {LOAD_STEPS.map((label, i) => (
-          <div
-            key={label}
-            className={cn(
-              "flex items-center gap-2.5 text-[13px] transition-all duration-300",
-              i < step
-                ? "text-neutral-400"
-                : i === step
-                  ? "text-neutral-800"
-                  : "text-neutral-300",
-            )}
-          >
-            {i < step ? (
-              <Check className="size-3.5 shrink-0 text-emerald-500" />
-            ) : i === step ? (
-              <Loader2 className="size-3.5 shrink-0 animate-spin text-amber-600" />
-            ) : (
-              <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full border border-neutral-200" />
-            )}
-            {label}
-          </div>
-        ))}
+    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-carbon">
+      <div className="flex items-center gap-2.5 text-[13px] text-dusk-muted">
+        <Loader2 className="size-4 animate-spin text-brass" />
+        {label}…
       </div>
     </div>
   );
@@ -81,14 +64,17 @@ function DepsPanel({ deps }: { deps: Record<string, string> }) {
   const entries = Object.entries(deps).sort(([a], [b]) => a.localeCompare(b));
   return (
     <div className="platform-scroll h-full overflow-y-auto p-3">
+      <p className="mb-2 px-0.5 font-mono text-[10px] uppercase tracking-widest text-dusk-faint">
+        {entries.length} packages installed
+      </p>
       <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
         {entries.map(([name, version]) => (
           <div
             key={name}
-            className="flex flex-col rounded-md border border-[#222] bg-[#151515] px-2.5 py-1.5"
+            className="flex flex-col rounded-md border border-carbon-line bg-carbon-raised px-2.5 py-1.5"
           >
-            <span className="truncate font-mono text-[11.5px] text-[#c4a882]">{name}</span>
-            <span className="font-mono text-[10.5px] text-[#555]">{version}</span>
+            <span className="truncate font-mono text-[11.5px] text-brass">{name}</span>
+            <span className="font-mono text-[10.5px] text-dusk-faint">{version}</span>
           </div>
         ))}
       </div>
@@ -96,13 +82,7 @@ function DepsPanel({ deps }: { deps: Record<string, string> }) {
   );
 }
 
-function PreviewContent({
-  viewerKey,
-  packageDeps,
-}: {
-  viewerKey: number;
-  packageDeps: Record<string, string>;
-}) {
+function PreviewContent({ packageDeps }: { packageDeps: Record<string, string> }) {
   const [panelOpen, setPanelOpen] = useState(false);
   const [bottomTab, setBottomTab] = useState<"console" | "deps">("console");
 
@@ -116,10 +96,10 @@ function PreviewContent({
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden bg-carbon">
       {/* Preview */}
       <div className="relative min-h-0 flex-1">
-        <SandpackLoader viewerKey={viewerKey} />
+        <BootOverlay />
         <SandpackPreviewPane
           showOpenInCodeSandbox={false}
           showRefreshButton={true}
@@ -129,13 +109,14 @@ function PreviewContent({
 
       {/* Bottom panel */}
       {panelOpen && (
-        <div className="h-48 shrink-0 overflow-hidden border-t border-[#1f1f1f] bg-[#0e0e0e]">
+        <div className="h-48 shrink-0 overflow-hidden border-t border-carbon-line bg-carbon">
           {bottomTab === "console" ? (
             <SandpackConsole
+              resetOnPreviewRestart
               style={{
                 height: "100%",
                 background: "transparent",
-                color: "#ccc",
+                color: "#97917f",
                 fontSize: "12px",
                 fontFamily: "ui-monospace, monospace",
               }}
@@ -147,41 +128,58 @@ function PreviewContent({
       )}
 
       {/* Status bar */}
-      <div className="flex h-7 shrink-0 items-center gap-1 border-t border-[#1f1f1f] bg-[#0e0e0e] px-3">
-        <button
+      <div className="flex h-7 shrink-0 items-center gap-1 border-t border-carbon-line bg-carbon px-3">
+        <StatusTab
+          active={panelOpen && bottomTab === "console"}
           onClick={() => toggleTab("console")}
-          className={cn(
-            "flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] transition-colors",
-            panelOpen && bottomTab === "console"
-              ? "bg-[#1e1e1e] text-[#c4a882]"
-              : "text-[#555] hover:text-[#888]",
-          )}
-        >
-          <Terminal className="size-3" />
-          Console
-        </button>
-        <button
+          icon={<Terminal className="size-3" />}
+          label="Console"
+        />
+        <StatusTab
+          active={panelOpen && bottomTab === "deps"}
           onClick={() => toggleTab("deps")}
-          className={cn(
-            "flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] transition-colors",
-            panelOpen && bottomTab === "deps"
-              ? "bg-[#1e1e1e] text-[#c4a882]"
-              : "text-[#555] hover:text-[#888]",
-          )}
+          icon={<Package className="size-3" />}
+          label="Dependencies"
+        />
+        <button
+          onClick={() => setPanelOpen((v) => !v)}
+          className="ml-auto text-dusk-faint transition-colors hover:text-dusk-muted"
         >
-          <Package className="size-3" />
-          Dependencies
+          {panelOpen ? (
+            <ChevronDown className="size-3.5" />
+          ) : (
+            <ChevronUp className="size-3.5" />
+          )}
         </button>
-        <div className="ml-auto">
-          <button
-            onClick={() => setPanelOpen((v) => !v)}
-            className="text-[#444] transition-colors hover:text-[#888]"
-          >
-            {panelOpen ? <ChevronDown className="size-3.5" /> : <ChevronUp className="size-3.5" />}
-          </button>
-        </div>
       </div>
     </div>
+  );
+}
+
+function StatusTab({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] transition-colors",
+        active
+          ? "bg-carbon-high text-brass"
+          : "text-dusk-faint hover:text-dusk-muted",
+      )}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }
 
@@ -210,8 +208,8 @@ export function LivePreview({ projectFiles, viewerKey }: PreviewProps) {
 
   if (!projectFiles.length) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#f9f9f9] text-[13px] text-neutral-400">
-        <Package className="size-8 text-neutral-300" />
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-carbon text-[13px] text-dusk-faint">
+        <Package className="size-8 text-dusk-faint/40" />
         <span>Nothing to preview yet.</span>
       </div>
     );
@@ -225,12 +223,13 @@ export function LivePreview({ projectFiles, viewerKey }: PreviewProps) {
       customSetup={{ dependencies, entry: "/src/main.tsx" }}
       options={{
         recompileMode: "delayed",
-        recompileDelay: 400,
+        recompileDelay: 250,
         externalResources: ["https://cdn.tailwindcss.com"],
+        bundlerTimeOut: 90000,
       }}
       style={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
-      <PreviewContent viewerKey={viewerKey} packageDeps={packageDeps} />
+      <PreviewContent packageDeps={packageDeps} />
     </SandpackProvider>
   );
 }

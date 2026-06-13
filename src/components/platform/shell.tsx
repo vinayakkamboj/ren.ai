@@ -45,12 +45,6 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link
-            href="/dashboard/projects/new"
-            className="flex h-8 items-center gap-1.5 rounded-lg bg-brass px-3 text-[12.5px] font-medium text-carbon transition-colors hover:bg-brass-deep"
-          >
-            + New project
-          </Link>
           <UserMenu />
         </div>
       </header>

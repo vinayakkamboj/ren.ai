@@ -56,16 +56,16 @@ export function ChatPanel() {
   const TierIcon = TIER_ICON[modelTier] ?? Sparkles;
 
   return (
-    <div className="flex h-full flex-col bg-[#0c0c0c]">
+    <div className="flex h-full flex-col bg-carbon">
       {/* Header */}
-      <div className="flex h-10 shrink-0 items-center gap-2 border-b border-[#1e1e1e] px-4">
-        <div className="flex size-5 items-center justify-center rounded-md bg-[#c4a882]/15">
-          <Sparkles className="size-3 text-[#c4a882]" />
+      <div className="flex h-10 shrink-0 items-center gap-2 border-b border-carbon-line px-4">
+        <div className="flex size-5 items-center justify-center rounded-md bg-brass/15">
+          <Sparkles className="size-3 text-brass" />
         </div>
-        <span className="text-[12px] font-semibold tracking-wide text-[#c4a882]">
+        <span className="text-[12px] font-semibold tracking-wide text-brass">
           Astra
         </span>
-        <span className="ml-auto font-mono text-[10px] uppercase tracking-widest text-[#2e2e2e]">
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-widest text-dusk-faint/60">
           AI Builder
         </span>
       </div>
@@ -83,14 +83,14 @@ export function ChatPanel() {
         )}
 
         {isBuilding && (
-          <div className="mt-5 overflow-hidden rounded-xl border border-[#1e1e1e] bg-[#111]">
-            <div className="flex items-center gap-2 px-3 py-2.5 text-[12.5px] text-[#c4a882]">
+          <div className="mt-5 overflow-hidden rounded-xl border border-carbon-line bg-carbon-raised">
+            <div className="flex items-center gap-2 px-3 py-2.5 text-[12.5px] text-brass">
               <Loader2 className="size-3.5 animate-spin" />
               <span>{PHASE_LABEL[phase] ?? "Working"}…</span>
             </div>
             {streamingText && (
-              <div className="border-t border-[#1e1e1e] px-3 py-2.5">
-                <p className="line-clamp-5 whitespace-pre-wrap font-mono text-[11.5px] leading-relaxed text-[#444]">
+              <div className="border-t border-carbon-line px-3 py-2.5">
+                <p className="line-clamp-5 whitespace-pre-wrap font-mono text-[11.5px] leading-relaxed text-dusk-faint">
                   {streamingText}
                 </p>
               </div>
@@ -100,9 +100,9 @@ export function ChatPanel() {
       </div>
 
       {/* Composer */}
-      <div className="shrink-0 border-t border-[#1e1e1e] p-3">
+      <div className="shrink-0 border-t border-carbon-line p-3">
         <ModelPicker />
-        <div className="mt-2 overflow-hidden rounded-xl border border-[#252525] bg-[#111] focus-within:border-[#333]">
+        <div className="mt-2 overflow-hidden rounded-xl border border-carbon-line bg-carbon-raised focus-within:border-carbon-line-strong">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -114,17 +114,17 @@ export function ChatPanel() {
             }}
             rows={3}
             placeholder="Describe a change — a page, a feature, a fix…"
-            className="platform-scroll w-full resize-none bg-transparent px-3 py-2.5 text-[13px] text-[#ccc] outline-none placeholder:text-[#333]"
+            className="platform-scroll w-full resize-none bg-transparent px-3 py-2.5 text-[13px] text-dusk outline-none placeholder:text-dusk-faint/70"
           />
           <div className="flex items-center justify-between px-3 pb-2.5 pt-0.5">
-            <div className="flex items-center gap-1.5 text-[10.5px] text-[#2e2e2e]">
+            <div className="flex items-center gap-1.5 text-[10.5px] text-dusk-faint/70">
               <TierIcon className="size-3" />
               <span>⏎ send · ⇧⏎ newline</span>
             </div>
             <button
               onClick={submit}
               disabled={!input.trim() || isBuilding}
-              className="flex size-7 items-center justify-center rounded-lg bg-[#c4a882] text-[#0c0c0c] transition-all hover:bg-[#d4b892] disabled:opacity-30"
+              className="flex size-7 items-center justify-center rounded-lg bg-brass text-carbon transition-all hover:bg-brass-deep disabled:opacity-30"
             >
               {isBuilding ? (
                 <Loader2 className="size-3.5 animate-spin" />
@@ -143,7 +143,7 @@ function Message({ message }: { message: BuildMessage }) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[88%] rounded-2xl rounded-br-sm bg-[#1c1c1c] px-3.5 py-2.5 text-[13px] leading-relaxed text-[#d0d0d0]">
+        <div className="max-w-[88%] rounded-2xl rounded-br-sm bg-carbon-high px-3.5 py-2.5 text-[13px] leading-relaxed text-dusk">
           {message.content}
         </div>
       </div>
@@ -152,17 +152,17 @@ function Message({ message }: { message: BuildMessage }) {
 
   return (
     <div className="flex gap-2.5">
-      <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-[#c4a882]/15">
-        <Sparkles className="size-3 text-[#c4a882]" />
+      <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-brass/15">
+        <Sparkles className="size-3 text-brass" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-[#909090]">
+        <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-dusk-muted">
           {message.content}
         </p>
         {message.plan && (
-          <div className="mt-2.5 overflow-hidden rounded-xl border border-[#1e1e1e] bg-[#0f0f0f]">
-            <div className="border-b border-[#1e1e1e] px-3 py-2">
-              <p className="text-[12.5px] font-medium text-[#c4a882]">
+          <div className="mt-2.5 overflow-hidden rounded-xl border border-carbon-line bg-carbon-raised">
+            <div className="border-b border-carbon-line px-3 py-2">
+              <p className="text-[12.5px] font-medium text-brass">
                 {message.plan.summary}
               </p>
             </div>
@@ -170,10 +170,10 @@ function Message({ message }: { message: BuildMessage }) {
               {message.plan.files.map((f) => (
                 <li
                   key={f}
-                  className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-[#1a1a1a]"
+                  className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-carbon-high"
                 >
-                  <FileCode2 className="size-3 shrink-0 text-[#c4a882]/50" />
-                  <span className="font-mono text-[11.5px] text-[#555]">{f}</span>
+                  <FileCode2 className="size-3 shrink-0 text-brass/50" />
+                  <span className="font-mono text-[11.5px] text-dusk-faint">{f}</span>
                 </li>
               ))}
             </ul>
@@ -195,16 +195,16 @@ function ModelPicker() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between rounded-lg border border-[#1e1e1e] bg-[#111] px-3 py-2 text-left transition-colors hover:border-[#2a2a2a]"
+        className="flex w-full items-center justify-between rounded-lg border border-carbon-line bg-carbon-raised px-3 py-2 text-left transition-colors hover:border-carbon-line-strong"
       >
         <span className="flex items-center gap-2 text-[12px]">
-          <ActiveIcon className="size-3.5 text-[#c4a882]" />
-          <span className="text-[#aaa]">{active.brandName}</span>
-          <span className="text-[11px] text-[#3a3a3a]">· {active.usageLevel}</span>
+          <ActiveIcon className="size-3.5 text-brass" />
+          <span className="text-dusk">{active.brandName}</span>
+          <span className="text-[11px] text-dusk-faint">· {active.usageLevel}</span>
         </span>
         <ChevronDown
           className={cn(
-            "size-3.5 text-[#3a3a3a] transition-transform",
+            "size-3.5 text-dusk-faint transition-transform",
             open && "rotate-180",
           )}
         />
@@ -213,7 +213,7 @@ function ModelPicker() {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute bottom-full left-0 z-20 mb-1.5 w-full overflow-hidden rounded-xl border border-[#252525] bg-[#0f0f0f] shadow-2xl">
+          <div className="absolute bottom-full left-0 z-20 mb-1.5 w-full overflow-hidden rounded-xl border border-carbon-line-strong bg-carbon-raised shadow-2xl">
             {MODEL_TIERS.map((tier) => {
               const TierIcon = TIER_ICON[tier.id as ModelTierId] ?? Sparkles;
               const isActive = tier.id === modelTier;
@@ -225,14 +225,14 @@ function ModelPicker() {
                     setOpen(false);
                   }}
                   className={cn(
-                    "flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-[#181818]",
-                    isActive && "bg-[#161616]",
+                    "flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-carbon-high",
+                    isActive && "bg-carbon-high",
                   )}
                 >
                   <TierIcon
                     className={cn(
                       "mt-0.5 size-3.5 shrink-0",
-                      isActive ? "text-[#c4a882]" : "text-[#3a3a3a]",
+                      isActive ? "text-brass" : "text-dusk-faint",
                     )}
                   />
                   <div className="min-w-0 flex-1">
@@ -240,14 +240,14 @@ function ModelPicker() {
                       <span
                         className={cn(
                           "text-[12.5px] font-medium",
-                          isActive ? "text-[#c4a882]" : "text-[#777]",
+                          isActive ? "text-brass" : "text-dusk-muted",
                         )}
                       >
                         {tier.brandName}
                       </span>
-                      <span className="text-[10.5px] text-[#333]">{tier.usageLevel}</span>
+                      <span className="text-[10.5px] text-dusk-faint">{tier.usageLevel}</span>
                     </div>
-                    <p className="mt-0.5 text-[11px] text-[#3a3a3a]">{tier.tagline}</p>
+                    <p className="mt-0.5 text-[11px] text-dusk-faint">{tier.tagline}</p>
                   </div>
                 </button>
               );
@@ -278,11 +278,11 @@ function EmptyState() {
   const sendMessage = useWorkspaceStore((s) => s.sendMessage);
   return (
     <div className="flex h-full flex-col items-center justify-center py-8 text-center">
-      <div className="flex size-12 items-center justify-center rounded-2xl bg-[#c4a882]/10 ring-1 ring-[#c4a882]/20">
-        <Sparkles className="size-5 text-[#c4a882]" />
+      <div className="flex size-12 items-center justify-center rounded-2xl bg-brass/10 ring-1 ring-brass/20">
+        <Sparkles className="size-5 text-brass" />
       </div>
-      <p className="mt-4 text-[14px] font-semibold text-[#777]">Start with Astra</p>
-      <p className="mt-1.5 max-w-[30ch] text-[12.5px] leading-relaxed text-[#3a3a3a]">
+      <p className="mt-4 text-[14px] font-semibold text-dusk">Start with Astra</p>
+      <p className="mt-1.5 max-w-[30ch] text-[12.5px] leading-relaxed text-dusk-faint">
         Describe what you want to build. Astra writes the code, wires the
         state, and renders it live.
       </p>
@@ -291,10 +291,10 @@ function EmptyState() {
           <button
             key={text}
             onClick={() => sendMessage(text)}
-            className="flex w-full items-start gap-2.5 rounded-xl border border-[#1a1a1a] bg-[#0f0f0f] px-3 py-2.5 text-left transition-all hover:border-[#252525] hover:bg-[#141414]"
+            className="flex w-full items-start gap-2.5 rounded-xl border border-carbon-line bg-carbon-raised px-3 py-2.5 text-left transition-all hover:border-carbon-line-strong hover:bg-carbon-high"
           >
-            <Icon className="mt-0.5 size-3.5 shrink-0 text-[#c4a882]/50" />
-            <span className="text-[12px] leading-relaxed text-[#444]">{text}</span>
+            <Icon className="mt-0.5 size-3.5 shrink-0 text-brass/50" />
+            <span className="text-[12px] leading-relaxed text-dusk-muted">{text}</span>
           </button>
         ))}
       </div>
